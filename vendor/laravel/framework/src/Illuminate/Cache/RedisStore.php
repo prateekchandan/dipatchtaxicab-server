@@ -1,9 +1,8 @@
 <?php namespace Illuminate\Cache;
 
-use Illuminate\Contracts\Cache\Store;
 use Illuminate\Redis\Database as Redis;
 
-class RedisStore extends TaggableStore implements Store {
+class RedisStore extends TaggableStore implements StoreInterface {
 
 	/**
 	 * The Redis database connection.
@@ -67,9 +66,9 @@ class RedisStore extends TaggableStore implements Store {
 	{
 		$value = is_numeric($value) ? $value : serialize($value);
 
-		$minutes = max(1, $minutes);
+		$this->connection()->set($this->prefix.$key, $value);
 
-		$this->connection()->setex($this->prefix.$key, $minutes * 60, $value);
+		$this->connection()->expire($this->prefix.$key, $minutes * 60);
 	}
 
 	/**
@@ -77,7 +76,7 @@ class RedisStore extends TaggableStore implements Store {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return int
+	 * @return void
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -89,7 +88,7 @@ class RedisStore extends TaggableStore implements Store {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return int
+	 * @return void
 	 */
 	public function decrement($key, $value = 1)
 	{
@@ -114,11 +113,11 @@ class RedisStore extends TaggableStore implements Store {
 	 * Remove an item from the cache.
 	 *
 	 * @param  string  $key
-	 * @return bool
+	 * @return void
 	 */
 	public function forget($key)
 	{
-		return (bool) $this->connection()->del($this->prefix.$key);
+		$this->connection()->del($this->prefix.$key);
 	}
 
 	/**
@@ -134,7 +133,7 @@ class RedisStore extends TaggableStore implements Store {
 	/**
 	 * Begin executing a new tags operation.
 	 *
-	 * @param  array|mixed  $names
+	 * @param  array|dynamic  $names
 	 * @return \Illuminate\Cache\RedisTaggedCache
 	 */
 	public function tags($names)
@@ -145,7 +144,7 @@ class RedisStore extends TaggableStore implements Store {
 	/**
 	 * Get the Redis connection instance.
 	 *
-	 * @return \Predis\ClientInterface
+	 * @return \Predis\Connection\SingleConnectionInterface
 	 */
 	public function connection()
 	{

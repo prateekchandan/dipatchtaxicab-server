@@ -4,30 +4,15 @@ use Closure;
 use DateTime;
 use ArrayAccess;
 use Carbon\Carbon;
-use Illuminate\Contracts\Cache\Store;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Cache\Repository as CacheContract;
 
-class Repository implements CacheContract, ArrayAccess {
-
-	use Macroable {
-		__call as macroCall;
-	}
+class Repository implements ArrayAccess {
 
 	/**
 	 * The cache store implementation.
 	 *
-	 * @var \Illuminate\Contracts\Cache\Store
+	 * @var \Illuminate\Cache\StoreInterface
 	 */
 	protected $store;
-
-	/**
-	 * The event dispatcher implementation.
-	 *
-	 * @var \Illuminate\Contracts\Events\Dispatcher
-	 */
-	protected $events;
 
 	/**
 	 * The default number of minutes to store items.
@@ -37,39 +22,20 @@ class Repository implements CacheContract, ArrayAccess {
 	protected $default = 60;
 
 	/**
+	 * An array of registered Cache macros.
+	 *
+	 * @var array
+	 */
+	protected $macros = array();
+
+	/**
 	 * Create a new cache repository instance.
 	 *
-	 * @param  \Illuminate\Contracts\Cache\Store  $store
+	 * @param  \Illuminate\Cache\StoreInterface  $store
 	 */
-	public function __construct(Store $store)
+	public function __construct(StoreInterface $store)
 	{
 		$this->store = $store;
-	}
-
-	/**
-	 * Set the event dispatcher instance.
-	 *
-	 * @param  \Illuminate\Contracts\Events\Dispatcher
-	 * @return void
-	 */
-	public function setEventDispatcher(Dispatcher $events)
-	{
-		$this->events = $events;
-	}
-
-	/**
-	 * Fire an event for this cache instance.
-	 *
-	 * @param  string  $event
-	 * @param  array  $payload
-	 * @return void
-	 */
-	protected function fireCacheEvent($event, $payload)
-	{
-		if (isset($this->events))
-		{
-			$this->events->fire('cache.'.$event, $payload);
-		}
 	}
 
 	/**
@@ -94,34 +60,7 @@ class Repository implements CacheContract, ArrayAccess {
 	{
 		$value = $this->store->get($key);
 
-		if (is_null($value))
-		{
-			$this->fireCacheEvent('missed', [$key]);
-
-			$value = value($default);
-		}
-		else
-		{
-			$this->fireCacheEvent('hit', [$key, $value]);
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Retrieve an item from the cache and delete it.
-	 *
-	 * @param  string  $key
-	 * @param  mixed   $default
-	 * @return mixed
-	 */
-	public function pull($key, $default = null)
-	{
-		$value = $this->get($key, $default);
-
-		$this->forget($key);
-
-		return $value;
+		return ! is_null($value) ? $value : value($default);
 	}
 
 	/**
@@ -136,12 +75,7 @@ class Repository implements CacheContract, ArrayAccess {
 	{
 		$minutes = $this->getMinutes($minutes);
 
-		if ( ! is_null($minutes))
-		{
-			$this->store->put($key, $value, $minutes);
-
-			$this->fireCacheEvent('write', [$key, $value, $minutes]);
-		}
+		$this->store->put($key, $value, $minutes);
 	}
 
 	/**
@@ -154,11 +88,6 @@ class Repository implements CacheContract, ArrayAccess {
 	 */
 	public function add($key, $value, $minutes)
 	{
-		if (method_exists($this->store, 'add'))
-		{
-			return $this->store->add($key, $value, $minutes);
-		}
-
 		if (is_null($this->get($key)))
 		{
 			$this->put($key, $value, $minutes); return true;
@@ -168,25 +97,11 @@ class Repository implements CacheContract, ArrayAccess {
 	}
 
 	/**
-	 * Store an item in the cache indefinitely.
-	 *
-	 * @param  string  $key
-	 * @param  mixed   $value
-	 * @return void
-	 */
-	public function forever($key, $value)
-	{
-		$this->store->forever($key, $value);
-
-		$this->fireCacheEvent('write', [$key, $value, 0]);
-	}
-
-	/**
 	 * Get an item from the cache, or store the default value.
 	 *
 	 * @param  string  $key
 	 * @param  \DateTime|int  $minutes
-	 * @param  \Closure  $callback
+	 * @param  Closure  $callback
 	 * @return mixed
 	 */
 	public function remember($key, $minutes, Closure $callback)
@@ -208,7 +123,7 @@ class Repository implements CacheContract, ArrayAccess {
 	 * Get an item from the cache, or store the default value forever.
 	 *
 	 * @param  string   $key
-	 * @param  \Closure  $callback
+	 * @param  Closure  $callback
 	 * @return mixed
 	 */
 	public function sear($key, Closure $callback)
@@ -220,7 +135,7 @@ class Repository implements CacheContract, ArrayAccess {
 	 * Get an item from the cache, or store the default value forever.
 	 *
 	 * @param  string   $key
-	 * @param  \Closure  $callback
+	 * @param  Closure  $callback
 	 * @return mixed
 	 */
 	public function rememberForever($key, Closure $callback)
@@ -236,21 +151,6 @@ class Repository implements CacheContract, ArrayAccess {
 		$this->forever($key, $value = $callback());
 
 		return $value;
-	}
-
-	/**
-	 * Remove an item from the cache.
-	 *
-	 * @param  string $key
-	 * @return bool
-	 */
-	public function forget($key)
-	{
-		$success = $this->store->forget($key);
-
-		$this->fireCacheEvent('delete', [$key]);
-
-		return $success;
 	}
 
 	/**
@@ -277,7 +177,7 @@ class Repository implements CacheContract, ArrayAccess {
 	/**
 	 * Get the cache store implementation.
 	 *
-	 * @return \Illuminate\Contracts\Cache\Store
+	 * @return \Illuminate\Cache\StoreInterface
 	 */
 	public function getStore()
 	{
@@ -333,18 +233,32 @@ class Repository implements CacheContract, ArrayAccess {
 	 * Calculate the number of minutes with the given duration.
 	 *
 	 * @param  \DateTime|int  $duration
-	 * @return int|null
+	 * @return int
 	 */
 	protected function getMinutes($duration)
 	{
 		if ($duration instanceof DateTime)
 		{
-			$fromNow = Carbon::instance($duration)->diffInMinutes();
+			$duration = Carbon::instance($duration);
 
-			return $fromNow > 0 ? $fromNow : null;
+			return max(0, Carbon::now()->diffInMinutes($duration, false));
 		}
+		else
+		{
+			return is_string($duration) ? intval($duration) : $duration;
+		}
+	}
 
-		return is_string($duration) ? (int) $duration : $duration;
+	/**
+	 * Register a macro with the Cache class.
+	 *
+	 * @param  string    $name
+	 * @param  callable  $callback
+	 * @return void
+	 */
+	public function macro($name, $callback)
+	{
+		$this->macros[$name] = $callback;
 	}
 
 	/**
@@ -356,12 +270,14 @@ class Repository implements CacheContract, ArrayAccess {
 	 */
 	public function __call($method, $parameters)
 	{
-		if (static::hasMacro($method))
+		if (isset($this->macros[$method]))
 		{
-			return $this->macroCall($method, $parameters);
+			return call_user_func_array($this->macros[$method], $parameters);
 		}
-
-		return call_user_func_array(array($this->store, $method), $parameters);
+		else
+		{
+			return call_user_func_array(array($this->store, $method), $parameters);
+		}
 	}
 
 }

@@ -48,7 +48,7 @@ class ApcWrapper {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return int|bool
+	 * @return array|bool
 	 */
 	public function increment($key, $value)
 	{
@@ -60,7 +60,7 @@ class ApcWrapper {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return int|bool
+	 * @return array|bool
 	 */
 	public function decrement($key, $value)
 	{
@@ -71,7 +71,7 @@ class ApcWrapper {
 	 * Remove an item from the cache.
 	 *
 	 * @param  string  $key
-	 * @return bool
+	 * @return array|bool
 	 */
 	public function delete($key)
 	{

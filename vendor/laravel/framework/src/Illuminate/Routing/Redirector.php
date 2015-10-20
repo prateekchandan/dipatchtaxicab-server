@@ -50,7 +50,7 @@ class Redirector {
 	 */
 	public function back($status = 302, $headers = array())
 	{
-		$back = $this->generator->previous();
+		$back = $this->generator->getRequest()->headers->get('referer');
 
 		return $this->createRedirect($back, $status, $headers);
 	}
@@ -94,7 +94,9 @@ class Redirector {
 	 */
 	public function intended($default = '/', $status = 302, $headers = array(), $secure = null)
 	{
-		$path = $this->session->pull('url.intended', $default);
+		$path = $this->session->get('url.intended', $default);
+
+		$this->session->forget('url.intended');
 
 		return $this->to($path, $status, $headers, $secure);
 	}
@@ -198,7 +200,7 @@ class Redirector {
 	/**
 	 * Get the URL generator instance.
 	 *
-	 * @return \Illuminate\Routing\UrlGenerator
+	 * @return  \Illuminate\Routing\UrlGenerator
 	 */
 	public function getUrlGenerator()
 	{

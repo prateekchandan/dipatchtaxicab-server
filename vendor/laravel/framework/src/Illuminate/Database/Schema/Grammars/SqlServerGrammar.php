@@ -157,6 +157,8 @@ class SqlServerGrammar extends Grammar {
 	 */
 	public function compileDropPrimary(Blueprint $blueprint, Fluent $command)
 	{
+		$table = $blueprint->getTable();
+
 		$table = $this->wrapTable($blueprint);
 
 		return "alter table {$table} drop constraint {$command->index}";
@@ -228,6 +230,7 @@ class SqlServerGrammar extends Grammar {
 	{
 		return "nchar({$column->length})";
 	}
+
 
 	/**
 	 * Create the column definition for a string type.
@@ -381,17 +384,6 @@ class SqlServerGrammar extends Grammar {
 	protected function typeEnum(Fluent $column)
 	{
 		return 'nvarchar(255)';
-	}
-
-	/**
-	 * Create the column definition for a json type.
-	 *
-	 * @param  \Illuminate\Support\Fluent  $column
-	 * @return string
-	 */
-	protected function typeJson(Fluent $column)
-	{
-		return 'nvarchar(max)';
 	}
 
 	/**

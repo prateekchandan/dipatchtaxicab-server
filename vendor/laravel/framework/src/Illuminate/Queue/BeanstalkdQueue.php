@@ -1,16 +1,15 @@
 <?php namespace Illuminate\Queue;
 
-use Pheanstalk\Pheanstalk;
-use Pheanstalk\Job as PheanstalkJob;
+use Pheanstalk_Job;
+use Pheanstalk_Pheanstalk as Pheanstalk;
 use Illuminate\Queue\Jobs\BeanstalkdJob;
-use Illuminate\Contracts\Queue\Queue as QueueContract;
 
-class BeanstalkdQueue extends Queue implements QueueContract {
+class BeanstalkdQueue extends Queue implements QueueInterface {
 
 	/**
 	 * The Pheanstalk instance.
 	 *
-	 * @var \Pheanstalk_Pheanstalk
+	 * @var Pheanstalk
 	 */
 	protected $pheanstalk;
 
@@ -31,7 +30,7 @@ class BeanstalkdQueue extends Queue implements QueueContract {
 	/**
 	 * Create a new Beanstalkd queue instance.
 	 *
-	 * @param  \Pheanstalk\Pheanstalk  $pheanstalk
+	 * @param  Pheanstalk  $pheanstalk
 	 * @param  string  $default
 	 * @param  int  $timeToRun
 	 * @return void
@@ -86,14 +85,14 @@ class BeanstalkdQueue extends Queue implements QueueContract {
 
 		$pheanstalk = $this->pheanstalk->useTube($this->getQueue($queue));
 
-		return $pheanstalk->put($payload, Pheanstalk::DEFAULT_PRIORITY, $this->getSeconds($delay), $this->timeToRun);
+		return $pheanstalk->put($payload, Pheanstalk::DEFAULT_PRIORITY, $this->getSeconds($delay));
 	}
 
 	/**
 	 * Pop the next job off of the queue.
 	 *
 	 * @param  string  $queue
-	 * @return \Illuminate\Contracts\Queue\Job|null
+	 * @return \Illuminate\Queue\Jobs\Job|null
 	 */
 	public function pop($queue = null)
 	{
@@ -101,7 +100,7 @@ class BeanstalkdQueue extends Queue implements QueueContract {
 
 		$job = $this->pheanstalk->watchOnly($queue)->reserve(0);
 
-		if ($job instanceof PheanstalkJob)
+		if ($job instanceof Pheanstalk_Job)
 		{
 			return new BeanstalkdJob($this->container, $this->pheanstalk, $job, $queue);
 		}
@@ -133,7 +132,7 @@ class BeanstalkdQueue extends Queue implements QueueContract {
 	/**
 	 * Get the underlying Pheanstalk instance.
 	 *
-	 * @return \Pheanstalk_Pheanstalk
+	 * @return Pheanstalk
 	 */
 	public function getPheanstalk()
 	{

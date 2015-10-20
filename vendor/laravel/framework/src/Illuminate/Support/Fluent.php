@@ -1,11 +1,10 @@
 <?php namespace Illuminate\Support;
 
 use ArrayAccess;
-use JsonSerializable;
-use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Contracts\JsonableInterface;
+use Illuminate\Support\Contracts\ArrayableInterface;
 
-class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable {
+class Fluent implements ArrayAccess, ArrayableInterface, JsonableInterface {
 
 	/**
 	 * All of the attributes set on the container.
@@ -17,7 +16,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable {
 	/**
 	 * Create a new fluent container instance.
 	 *
-	 * @param  array|object	$attributes
+	 * @param  array  $attributes
 	 * @return void
 	 */
 	public function __construct($attributes = array())
@@ -63,16 +62,6 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable {
 	public function toArray()
 	{
 		return $this->attributes;
-	}
-
-	/**
-	 * Convert the object into something JSON serializable.
-	 *
-	 * @return array
-	 */
-	public function jsonSerialize()
-	{
-		return $this->toArray();
 	}
 
 	/**
@@ -136,7 +125,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable {
 	 *
 	 * @param  string  $method
 	 * @param  array   $parameters
-	 * @return $this
+	 * @return \Illuminate\Support\Fluent
 	 */
 	public function __call($method, $parameters)
 	{

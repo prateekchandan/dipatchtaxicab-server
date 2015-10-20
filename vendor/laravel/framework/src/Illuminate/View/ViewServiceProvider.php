@@ -1,5 +1,6 @@
 <?php namespace Illuminate\View;
 
+use Illuminate\Support\MessageBag;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Engines\CompilerEngine;
@@ -19,7 +20,12 @@ class ViewServiceProvider extends ServiceProvider {
 
 		$this->registerViewFinder();
 
-		$this->registerFactory();
+		// Once the other components have been registered we're ready to include the
+		// view environment and session binder. The session binder will bind onto
+		// the "before" application event and add errors into shared view data.
+		$this->registerEnvironment();
+
+		$this->registerSessionBinder();
 	}
 
 	/**
@@ -29,7 +35,9 @@ class ViewServiceProvider extends ServiceProvider {
 	 */
 	public function registerEngineResolver()
 	{
-		$this->app->singleton('view.engine.resolver', function()
+		$me = $this;
+
+		$this->app->bindShared('view.engine.resolver', function($app) use ($me)
 		{
 			$resolver = new EngineResolver;
 
@@ -38,7 +46,7 @@ class ViewServiceProvider extends ServiceProvider {
 			// on the extension of view files. We call a method for each engines.
 			foreach (array('php', 'blade') as $engine)
 			{
-				$this->{'register'.ucfirst($engine).'Engine'}($resolver);
+				$me->{'register'.ucfirst($engine).'Engine'}($resolver);
 			}
 
 			return $resolver;
@@ -69,9 +77,9 @@ class ViewServiceProvider extends ServiceProvider {
 		// The Compiler engine requires an instance of the CompilerInterface, which in
 		// this case will be the Blade compiler, so we'll first create the compiler
 		// instance to pass into the engine so it can compile the views properly.
-		$app->singleton('blade.compiler', function($app)
+		$app->bindShared('blade.compiler', function($app)
 		{
-			$cache = $app['config']['view.compiled'];
+			$cache = $app['path.storage'].'/views';
 
 			return new BladeCompiler($app['files'], $cache);
 		});
@@ -89,7 +97,7 @@ class ViewServiceProvider extends ServiceProvider {
 	 */
 	public function registerViewFinder()
 	{
-		$this->app->bind('view.finder', function($app)
+		$this->app->bindShared('view.finder', function($app)
 		{
 			$paths = $app['config']['view.paths'];
 
@@ -102,9 +110,9 @@ class ViewServiceProvider extends ServiceProvider {
 	 *
 	 * @return void
 	 */
-	public function registerFactory()
+	public function registerEnvironment()
 	{
-		$this->app->singleton('view', function($app)
+		$this->app->bindShared('view', function($app)
 		{
 			// Next we need to grab the engine resolver instance that will be used by the
 			// environment. The resolver will be used by an environment to get each of
@@ -113,7 +121,7 @@ class ViewServiceProvider extends ServiceProvider {
 
 			$finder = $app['view.finder'];
 
-			$env = new Factory($resolver, $finder, $app['events']);
+			$env = new Environment($resolver, $finder, $app['events']);
 
 			// We will also set the container instance on this view environment since the
 			// view composers may be classes registered in the container, which allows
@@ -124,6 +132,53 @@ class ViewServiceProvider extends ServiceProvider {
 
 			return $env;
 		});
+	}
+
+	/**
+	 * Register the session binder for the view environment.
+	 *
+	 * @return void
+	 */
+	protected function registerSessionBinder()
+	{
+		list($app, $me) = array($this->app, $this);
+
+		$app->booted(function() use ($app, $me)
+		{
+			// If the current session has an "errors" variable bound to it, we will share
+			// its value with all view instances so the views can easily access errors
+			// without having to bind. An empty bag is set when there aren't errors.
+			if ($me->sessionHasErrors($app))
+			{
+				$errors = $app['session.store']->get('errors');
+
+				$app['view']->share('errors', $errors);
+			}
+
+			// Putting the errors in the view for every view allows the developer to just
+			// assume that some errors are always available, which is convenient since
+			// they don't have to continually run checks for the presence of errors.
+			else
+			{
+				$app['view']->share('errors', new MessageBag);
+			}
+		});
+	}
+
+	/**
+	 * Determine if the application session has errors.
+	 *
+	 * @param  \Illuminate\Foundation\Application  $app
+	 * @return bool
+	 */
+	public function sessionHasErrors($app)
+	{
+		$config = $app['config']['session'];
+
+		if (isset($app['session.store']) && ! is_null($config['driver']))
+		{
+			return $app['session.store']->has('errors');
+		}
 	}
 
 }

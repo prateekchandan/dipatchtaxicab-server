@@ -1,12 +1,6 @@
 {
     "name": "illuminate/log",
-    "description": "The Illuminate Log package.",
     "license": "MIT",
-    "homepage": "http://laravel.com",
-    "support": {
-        "issues": "https://github.com/laravel/framework/issues",
-        "source": "https://github.com/laravel/framework"
-    },
     "authors": [
         {
             "name": "Taylor Otwell",
@@ -14,19 +8,24 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "illuminate/contracts": "5.0.*",
-        "illuminate/support": "5.0.*",
-        "monolog/monolog": "~1.11"
+        "php": ">=5.3.0",
+        "illuminate/support": "4.1.*",
+        "monolog/monolog": "1.*"
+    },
+    "require-dev": {
+        "mockery/mockery": "0.9.*",
+        "phpunit/phpunit": "4.0.*",
+        "illuminate/events": "4.1.*"
     },
     "autoload": {
-        "psr-4": {
-            "Illuminate\\Log\\": ""
+        "psr-0": {
+            "Illuminate\\Log": ""
         }
     },
+    "target-dir": "Illuminate/Log",
     "extra": {
         "branch-alias": {
-            "dev-master": "5.0-dev"
+            "dev-master": "4.1-dev"
         }
     },
     "minimum-stability": "dev"

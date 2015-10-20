@@ -1,8 +1,6 @@
 <?php namespace Illuminate\Cache;
 
-use Illuminate\Contracts\Cache\Store;
-
-class ApcStore extends TaggableStore implements Store {
+class ApcStore extends TaggableStore implements StoreInterface {
 
 	/**
 	 * The APC wrapper instance.
@@ -53,7 +51,7 @@ class ApcStore extends TaggableStore implements Store {
 	 * @param  string  $key
 	 * @param  mixed   $value
 	 * @param  int     $minutes
-	 * @return void
+	 * @return array|bool
 	 */
 	public function put($key, $value, $minutes)
 	{
@@ -65,7 +63,7 @@ class ApcStore extends TaggableStore implements Store {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return int|bool
+	 * @return array|bool
 	 */
 	public function increment($key, $value = 1)
 	{
@@ -77,7 +75,7 @@ class ApcStore extends TaggableStore implements Store {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return int|bool
+	 * @return array|bool
 	 */
 	public function decrement($key, $value = 1)
 	{
@@ -100,11 +98,11 @@ class ApcStore extends TaggableStore implements Store {
 	 * Remove an item from the cache.
 	 *
 	 * @param  string  $key
-	 * @return bool
+	 * @return array|bool
 	 */
 	public function forget($key)
 	{
-		return $this->apc->delete($this->prefix.$key);
+		$this->apc->delete($this->prefix.$key);
 	}
 
 	/**

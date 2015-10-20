@@ -4,9 +4,9 @@ use IronMQ;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Queue\Jobs\IronJob;
-use Illuminate\Contracts\Queue\Queue as QueueContract;
+use Illuminate\Encryption\Encrypter;
 
-class IronQueue extends Queue implements QueueContract {
+class IronQueue extends Queue implements QueueInterface {
 
 	/**
 	 * The IronMQ instance.
@@ -14,6 +14,13 @@ class IronQueue extends Queue implements QueueContract {
 	 * @var IronMQ
 	 */
 	protected $iron;
+
+	/**
+	 * The encrypter instance.
+	 *
+	 * @var \Illuminate\Encryption\Encrypter
+	 */
+	protected $crypt;
 
 	/**
 	 * The current request instance.
@@ -30,27 +37,20 @@ class IronQueue extends Queue implements QueueContract {
 	protected $default;
 
 	/**
-	 * Indicates if the messages should be encrypted.
-	 *
-	 * @var bool
-	 */
-	protected $shouldEncrypt;
-
-	/**
 	 * Create a new IronMQ queue instance.
 	 *
 	 * @param  \IronMQ  $iron
+	 * @param  \Illuminate\Encryption\Encrypter  $crypt
 	 * @param  \Illuminate\Http\Request  $request
 	 * @param  string  $default
-	 * @param  bool  $shouldEncrypt
 	 * @return void
 	 */
-	public function __construct(IronMQ $iron, Request $request, $default, $shouldEncrypt = false)
+	public function __construct(IronMQ $iron, Encrypter $crypt, Request $request, $default)
 	{
 		$this->iron = $iron;
+		$this->crypt = $crypt;
 		$this->request = $request;
 		$this->default = $default;
-		$this->shouldEncrypt = $shouldEncrypt;
 	}
 
 	/**
@@ -76,7 +76,7 @@ class IronQueue extends Queue implements QueueContract {
 	 */
 	public function pushRaw($payload, $queue = null, array $options = array())
 	{
-		if ($this->shouldEncrypt) $payload = $this->crypt->encrypt($payload);
+		$payload = $this->crypt->encrypt($payload);
 
 		return $this->iron->postMessage($this->getQueue($queue), $payload, $options)->id;
 	}
@@ -111,14 +111,14 @@ class IronQueue extends Queue implements QueueContract {
 
 		$payload = $this->createPayload($job, $data, $queue);
 
-		return $this->pushRaw($payload, $queue, compact('delay'));
+		return $this->pushRaw($payload, $this->getQueue($queue), compact('delay'));
 	}
 
 	/**
 	 * Pop the next job off of the queue.
 	 *
 	 * @param  string  $queue
-	 * @return \Illuminate\Contracts\Queue\Job|null
+	 * @return \Illuminate\Queue\Jobs\Job|null
 	 */
 	public function pop($queue = null)
 	{
@@ -131,7 +131,7 @@ class IronQueue extends Queue implements QueueContract {
 		// queues will be a security hazard to unsuspecting developers using it.
 		if ( ! is_null($job))
 		{
-			$job->body = $this->parseJobBody($job->body);
+			$job->body = $this->crypt->decrypt($job->body);
 
 			return new IronJob($this->container, $this, $job);
 		}
@@ -170,7 +170,7 @@ class IronQueue extends Queue implements QueueContract {
 	{
 		$r = $this->request;
 
-		$body = $this->parseJobBody($r->getContent());
+		$body = $this->crypt->decrypt($r->getContent());
 
 		return (object) array(
 			'id' => $r->header('iron-message-id'), 'body' => $body, 'pushed' => true,
@@ -204,17 +204,6 @@ class IronQueue extends Queue implements QueueContract {
 	}
 
 	/**
-	 * Parse the job body for firing.
-	 *
-	 * @param  string  $body
-	 * @return string
-	 */
-	protected function parseJobBody($body)
-	{
-		return $this->shouldEncrypt ? $this->crypt->decrypt($body) : $body;
-	}
-
-	/**
 	 * Get the queue or return the default.
 	 *
 	 * @param  string|null  $queue
@@ -228,7 +217,7 @@ class IronQueue extends Queue implements QueueContract {
 	/**
 	 * Get the underlying IronMQ instance.
 	 *
-	 * @return \IronMQ
+	 * @return IronMQ
 	 */
 	public function getIron()
 	{

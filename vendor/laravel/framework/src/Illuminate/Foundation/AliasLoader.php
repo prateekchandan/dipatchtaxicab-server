@@ -24,11 +24,12 @@ class AliasLoader {
 	protected static $instance;
 
 	/**
-	 * Create a new AliasLoader instance.
+	 * Create a new class alias loader instance.
 	 *
 	 * @param  array  $aliases
+	 * @return void
 	 */
-	private function __construct($aliases)
+	public function __construct(array $aliases = array())
 	{
 		$this->aliases = $aliases;
 	}
@@ -41,7 +42,7 @@ class AliasLoader {
 	 */
 	public static function getInstance(array $aliases = array())
 	{
-		if (is_null(static::$instance)) return static::$instance = new static($aliases);
+		if (is_null(static::$instance)) static::$instance = new static($aliases);
 
 		$aliases = array_merge(static::$instance->getAliases(), $aliases);
 
@@ -152,16 +153,6 @@ class AliasLoader {
 	public static function setInstance($loader)
 	{
 		static::$instance = $loader;
-	}
-
-	/**
-	 * Clone method.
-	 *
-	 * @return void
-	 */
-	private function __clone()
-	{
-		//
 	}
 
 }

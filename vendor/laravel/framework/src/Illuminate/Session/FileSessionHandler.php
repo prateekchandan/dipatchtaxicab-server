@@ -1,10 +1,9 @@
 <?php namespace Illuminate\Session;
 
-use SessionHandlerInterface;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Filesystem\Filesystem;
 
-class FileSessionHandler implements SessionHandlerInterface {
+class FileSessionHandler implements \SessionHandlerInterface {
 
 	/**
 	 * The filesystem instance.
@@ -58,8 +57,10 @@ class FileSessionHandler implements SessionHandlerInterface {
 		{
 			return $this->files->get($path);
 		}
-
-		return '';
+		else
+		{
+			return '';
+		}
 	}
 
 	/**
@@ -67,7 +68,7 @@ class FileSessionHandler implements SessionHandlerInterface {
 	 */
 	public function write($sessionId, $data)
 	{
-		$this->files->put($this->path.'/'.$sessionId, $data, true);
+		$this->files->put($this->path.'/'.$sessionId, $data);
 	}
 
 	/**

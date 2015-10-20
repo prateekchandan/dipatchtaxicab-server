@@ -38,8 +38,8 @@ class Blueprint {
 	/**
 	 * Create a new schema blueprint.
 	 *
-	 * @param  string  $table
-	 * @param  \Closure|null  $callback
+	 * @param  string   $table
+	 * @param  Closure  $callback
 	 * @return void
 	 */
 	public function __construct($table, Closure $callback = null)
@@ -103,14 +103,9 @@ class Blueprint {
 	 */
 	protected function addImpliedCommands()
 	{
-		if (count($this->getAddedColumns()) > 0 && ! $this->creating())
+		if (count($this->columns) > 0 && ! $this->creating())
 		{
 			array_unshift($this->commands, $this->createCommand('add'));
-		}
-
-		if (count($this->getChangedColumns()) > 0 && ! $this->creating())
-		{
-			array_unshift($this->commands, $this->createCommand('change'));
 		}
 
 		$this->addFluentIndexes();
@@ -531,6 +526,7 @@ class Blueprint {
 	 * @param  int|null	$total
 	 * @param  int|null $places
 	 * @return \Illuminate\Support\Fluent
+	 *
 	 */
 	public function double($column, $total = null, $places = null)
 	{
@@ -571,17 +567,6 @@ class Blueprint {
 	public function enum($column, array $allowed)
 	{
 		return $this->addColumn('enum', $column, compact('allowed'));
-	}
-
-	/**
-	 * Create a new json column on the table.
-	 *
-	 * @param  string  $column
-	 * @return \Illuminate\Support\Fluent
-	 */
-	public function json($column)
-	{
-		return $this->addColumn('json', $column);
 	}
 
 	/**
@@ -655,11 +640,11 @@ class Blueprint {
 	/**
 	 * Add a "deleted at" timestamp for the table.
 	 *
-	 * @return \Illuminate\Support\Fluent
+	 * @return void
 	 */
 	public function softDeletes()
 	{
-		return $this->timestamp('deleted_at')->nullable();
+		$this->timestamp('deleted_at')->nullable();
 	}
 
 	/**
@@ -677,26 +662,13 @@ class Blueprint {
 	 * Add the proper columns for a polymorphic table.
 	 *
 	 * @param  string  $name
-	 * @param  string|null  $indexName
 	 * @return void
 	 */
-	public function morphs($name, $indexName = null)
+	public function morphs($name)
 	{
 		$this->unsignedInteger("{$name}_id");
 
 		$this->string("{$name}_type");
-
-		$this->index(array("{$name}_id", "{$name}_type"), $indexName);
-	}
-
-	/**
-	 * Adds the `remember_token` column to the table.
-	 *
-	 * @return \Illuminate\Support\Fluent
-	 */
-	public function rememberToken()
-	{
-		return $this->string('remember_token', 100)->nullable();
 	}
 
 	/**
@@ -713,7 +685,7 @@ class Blueprint {
 
 		// If the given "index" is actually an array of columns, the developer means
 		// to drop an index merely by specifying the columns involved without the
-		// conventional name, so we will build the index name from the columns.
+		// conventional name, so we will built the index name from the columns.
 		if (is_array($index))
 		{
 			$columns = $index;
@@ -782,7 +754,7 @@ class Blueprint {
 	 * Remove a column from the schema blueprint.
 	 *
 	 * @param  string  $name
-	 * @return $this
+	 * @return \Illuminate\Database\Schema\Blueprint
 	 */
 	public function removeColumn($name)
 	{
@@ -831,7 +803,7 @@ class Blueprint {
 	}
 
 	/**
-	 * Get the columns on the blueprint.
+	 * Get the columns that should be added.
 	 *
 	 * @return array
 	 */
@@ -848,32 +820,6 @@ class Blueprint {
 	public function getCommands()
 	{
 		return $this->commands;
-	}
-
-	/**
-	 * Get the columns on the blueprint that should be added.
-	 *
-	 * @return array
-	 */
-	public function getAddedColumns()
-	{
-		return array_filter($this->columns, function($column)
-		{
-			return !$column->change;
-		});
-	}
-
-	/**
-	 * Get the columns on the blueprint that should be changed.
-	 *
-	 * @return array
-	 */
-	public function getChangedColumns()
-	{
-		return array_filter($this->columns, function($column)
-		{
-			return !!$column->change;
-		});
 	}
 
 }

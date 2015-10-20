@@ -1,15 +1,13 @@
 <?php namespace Illuminate\Auth;
 
-use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Contracts\Hashing\Hasher as HasherContract;
-use Illuminate\Contracts\Auth\Authenticatable as UserContract;
+use Illuminate\Hashing\HasherInterface;
 
-class EloquentUserProvider implements UserProvider {
+class EloquentUserProvider implements UserProviderInterface {
 
 	/**
 	 * The hasher implementation.
 	 *
-	 * @var \Illuminate\Contracts\Hashing\Hasher
+	 * @var \Illuminate\Hashing\HasherInterface
 	 */
 	protected $hasher;
 
@@ -23,11 +21,11 @@ class EloquentUserProvider implements UserProvider {
 	/**
 	 * Create a new database user provider.
 	 *
-	 * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
+	 * @param  \Illuminate\Hashing\HasherInterface  $hasher
 	 * @param  string  $model
 	 * @return void
 	 */
-	public function __construct(HasherContract $hasher, $model)
+	public function __construct(HasherInterface $hasher, $model)
 	{
 		$this->model = $model;
 		$this->hasher = $hasher;
@@ -37,7 +35,7 @@ class EloquentUserProvider implements UserProvider {
 	 * Retrieve a user by their unique identifier.
 	 *
 	 * @param  mixed  $identifier
-	 * @return \Illuminate\Contracts\Auth\Authenticatable|null
+	 * @return \Illuminate\Auth\UserInterface|null
 	 */
 	public function retrieveById($identifier)
 	{
@@ -45,11 +43,11 @@ class EloquentUserProvider implements UserProvider {
 	}
 
 	/**
-	 * Retrieve a user by their unique identifier and "remember me" token.
+	 * Retrieve a user by by their unique identifier and "remember me" token.
 	 *
 	 * @param  mixed  $identifier
 	 * @param  string  $token
-	 * @return \Illuminate\Contracts\Auth\Authenticatable|null
+	 * @return \Illuminate\Auth\UserInterface|null
 	 */
 	public function retrieveByToken($identifier, $token)
 	{
@@ -64,13 +62,13 @@ class EloquentUserProvider implements UserProvider {
 	/**
 	 * Update the "remember me" token for the given user in storage.
 	 *
-	 * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+	 * @param  \Illuminate\Auth\UserInterface  $user
 	 * @param  string  $token
 	 * @return void
 	 */
-	public function updateRememberToken(UserContract $user, $token)
+	public function updateRememberToken(UserInterface $user, $token)
 	{
-		$user->setRememberToken($token);
+		$user->setAttribute($user->getRememberTokenName(), $token);
 
 		$user->save();
 	}
@@ -79,7 +77,7 @@ class EloquentUserProvider implements UserProvider {
 	 * Retrieve a user by the given credentials.
 	 *
 	 * @param  array  $credentials
-	 * @return \Illuminate\Contracts\Auth\Authenticatable|null
+	 * @return \Illuminate\Auth\UserInterface|null
 	 */
 	public function retrieveByCredentials(array $credentials)
 	{
@@ -99,11 +97,11 @@ class EloquentUserProvider implements UserProvider {
 	/**
 	 * Validate a user against the given credentials.
 	 *
-	 * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+	 * @param  \Illuminate\Auth\UserInterface  $user
 	 * @param  array  $credentials
 	 * @return bool
 	 */
-	public function validateCredentials(UserContract $user, array $credentials)
+	public function validateCredentials(UserInterface $user, array $credentials)
 	{
 		$plain = $credentials['password'];
 

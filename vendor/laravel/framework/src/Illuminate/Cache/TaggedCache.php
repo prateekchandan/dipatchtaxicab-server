@@ -1,16 +1,13 @@
 <?php namespace Illuminate\Cache;
 
 use Closure;
-use DateTime;
-use Carbon\Carbon;
-use Illuminate\Contracts\Cache\Store;
 
-class TaggedCache implements Store {
+class TaggedCache implements StoreInterface {
 
 	/**
 	 * The cache store implementation.
 	 *
-	 * @var \Illuminate\Contracts\Cache\Store
+	 * @var \Illuminate\Cache\StoreInterface
 	 */
 	protected $store;
 
@@ -24,11 +21,11 @@ class TaggedCache implements Store {
 	/**
 	 * Create a new tagged cache instance.
 	 *
-	 * @param  \Illuminate\Contracts\Cache\Store  $store
+	 * @param  \Illuminate\Cache\StoreInterface  $store
 	 * @param  \Illuminate\Cache\TagSet  $tags
 	 * @return void
 	 */
-	public function __construct(Store $store, TagSet $tags)
+	public function __construct(StoreInterface $store, TagSet $tags)
 	{
 		$this->tags = $tags;
 		$this->store = $store;
@@ -64,17 +61,12 @@ class TaggedCache implements Store {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @param  \DateTime|int  $minutes
+	 * @param  int     $minutes
 	 * @return void
 	 */
 	public function put($key, $value, $minutes)
 	{
-		$minutes = $this->getMinutes($minutes);
-
-		if ( ! is_null($minutes))
-		{
-			$this->store->put($this->taggedItemKey($key), $value, $minutes);
-		}
+		return $this->store->put($this->taggedItemKey($key), $value, $minutes);
 	}
 
 	/**
@@ -135,11 +127,11 @@ class TaggedCache implements Store {
 	 * Remove an item from the cache.
 	 *
 	 * @param  string  $key
-	 * @return bool
+	 * @return void
 	 */
 	public function forget($key)
 	{
-		return $this->store->forget($this->taggedItemKey($key));
+		$this->store->forget($this->taggedItemKey($key));
 	}
 
 	/**
@@ -155,9 +147,9 @@ class TaggedCache implements Store {
 	/**
 	 * Get an item from the cache, or store the default value.
 	 *
-	 * @param  string  $key
-	 * @param  \DateTime|int  $minutes
-	 * @param  \Closure  $callback
+	 * @param  string   $key
+	 * @param  int      $minutes
+	 * @param  Closure  $callback
 	 * @return mixed
 	 */
 	public function remember($key, $minutes, Closure $callback)
@@ -165,7 +157,7 @@ class TaggedCache implements Store {
 		// If the item exists in the cache we will just return this immediately
 		// otherwise we will execute the given Closure and cache the result
 		// of that execution for the given number of minutes in storage.
-		if ( ! is_null($value = $this->get($key))) return $value;
+		if ($this->has($key)) return $this->get($key);
 
 		$this->put($key, $value = $callback(), $minutes);
 
@@ -175,8 +167,8 @@ class TaggedCache implements Store {
 	/**
 	 * Get an item from the cache, or store the default value forever.
 	 *
-	 * @param  string    $key
-	 * @param  \Closure  $callback
+	 * @param  string   $key
+	 * @param  Closure  $callback
 	 * @return mixed
 	 */
 	public function sear($key, Closure $callback)
@@ -187,8 +179,8 @@ class TaggedCache implements Store {
 	/**
 	 * Get an item from the cache, or store the default value forever.
 	 *
-	 * @param  string    $key
-	 * @param  \Closure  $callback
+	 * @param  string   $key
+	 * @param  Closure  $callback
 	 * @return mixed
 	 */
 	public function rememberForever($key, Closure $callback)
@@ -196,7 +188,7 @@ class TaggedCache implements Store {
 		// If the item exists in the cache we will just return this immediately
 		// otherwise we will execute the given Closure and cache the result
 		// of that execution for the given number of minutes. It's easy.
-		if ( ! is_null($value = $this->get($key))) return $value;
+		if ($this->has($key)) return $this->get($key);
 
 		$this->forever($key, $value = $callback());
 
@@ -211,7 +203,7 @@ class TaggedCache implements Store {
 	 */
 	public function taggedItemKey($key)
 	{
-		return sha1($this->tags->getNamespace()).':'.$key;
+		return $this->getPrefix().sha1($this->tags->getNamespace()).':'.$key;
 	}
 
 	/**
@@ -222,24 +214,6 @@ class TaggedCache implements Store {
 	public function getPrefix()
 	{
 		return $this->store->getPrefix();
-	}
-
-	/**
-	 * Calculate the number of minutes with the given duration.
-	 *
-	 * @param  \DateTime|int  $duration
-	 * @return int|null
-	 */
-	protected function getMinutes($duration)
-	{
-		if ($duration instanceof DateTime)
-		{
-			$fromNow = Carbon::instance($duration)->diffInMinutes();
-
-			return $fromNow > 0 ? $fromNow : null;
-		}
-
-		return is_string($duration) ? (int) $duration : $duration;
 	}
 
 }

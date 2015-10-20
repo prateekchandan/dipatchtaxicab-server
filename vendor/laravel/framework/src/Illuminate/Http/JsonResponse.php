@@ -1,11 +1,9 @@
 <?php namespace Illuminate\Http;
 
-use Illuminate\Contracts\Support\Jsonable;
-use Symfony\Component\HttpFoundation\JsonResponse as BaseJsonResponse;
+use Symfony\Component\HttpFoundation\Cookie;
+use Illuminate\Support\Contracts\JsonableInterface;
 
-class JsonResponse extends BaseJsonResponse {
-
-	use ResponseTrait;
+class JsonResponse extends \Symfony\Component\HttpFoundation\JsonResponse {
 
 	/**
 	 * The json encoding options.
@@ -32,8 +30,8 @@ class JsonResponse extends BaseJsonResponse {
 	/**
 	 * Get the json_decoded data from the response
 	 *
-	 * @param  bool  $assoc
-	 * @param  int   $depth
+	 * @param  bool $assoc
+	 * @param  int  $depth
 	 * @return mixed
 	 */
 	public function getData($assoc = false, $depth = 512)
@@ -46,34 +44,39 @@ class JsonResponse extends BaseJsonResponse {
 	 */
 	public function setData($data = array())
 	{
-		$this->data = $data instanceof Jsonable
-								   ? $data->toJson($this->jsonOptions)
-								   : json_encode($data, $this->jsonOptions);
+		$this->data = $data instanceof JsonableInterface
+                                   ? $data->toJson($this->jsonOptions)
+                                   : json_encode($data, $this->jsonOptions);
 
 		return $this->update();
 	}
 
 	/**
-	 * Get the JSON encoding options.
+	 * Set a header on the Response.
 	 *
-	 * @return int
+	 * @param  string  $key
+	 * @param  string  $value
+	 * @param  bool    $replace
+	 * @return \Illuminate\Http\Response
 	 */
-	public function getJsonOptions()
+	public function header($key, $value, $replace = true)
 	{
-		return $this->jsonOptions;
+		$this->headers->set($key, $value, $replace);
+
+		return $this;
 	}
 
 	/**
-	 * Set the JSON encoding options.
+	 * Add a cookie to the response.
 	 *
-	 * @param  int  $options
-	 * @return mixed
+	 * @param  \Symfony\Component\HttpFoundation\Cookie  $cookie
+	 * @return \Illuminate\Http\Response
 	 */
-	public function setJsonOptions($options)
+	public function withCookie(Cookie $cookie)
 	{
-		$this->jsonOptions = $options;
+		$this->headers->setCookie($cookie);
 
-		return $this->setData($this->getData());
+		return $this;
 	}
 
 }

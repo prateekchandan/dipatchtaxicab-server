@@ -2,9 +2,8 @@
 
 use Illuminate\Queue\IronQueue;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Queue\Job as JobContract;
 
-class IronJob extends Job implements JobContract {
+class IronJob extends Job {
 
 	/**
 	 * The Iron queue instance.
@@ -16,7 +15,7 @@ class IronJob extends Job implements JobContract {
 	/**
 	 * The IronMQ message instance.
 	 *
-	 * @var object
+	 * @var array
 	 */
 	protected $job;
 
@@ -33,6 +32,7 @@ class IronJob extends Job implements JobContract {
 	 * @param  \Illuminate\Container\Container  $container
 	 * @param  \Illuminate\Queue\IronQueue  $iron
 	 * @param  object  $job
+	 * @param  string  $queue
 	 * @param  bool    $pushed
 	 * @return void
 	 */
@@ -89,8 +89,6 @@ class IronJob extends Job implements JobContract {
 	 */
 	public function release($delay = 0)
 	{
-		parent::release($delay);
-
 		if ( ! $this->pushed) $this->delete();
 
 		$this->recreateJob($delay);

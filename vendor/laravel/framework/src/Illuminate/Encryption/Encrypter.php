@@ -1,12 +1,11 @@
 <?php namespace Illuminate\Encryption;
 
-use Exception;
-use Illuminate\Contracts\Encryption\DecryptException;
 use Symfony\Component\Security\Core\Util\StringUtils;
 use Symfony\Component\Security\Core\Util\SecureRandom;
-use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 
-class Encrypter implements EncrypterContract {
+class DecryptException extends \RuntimeException {}
+
+class Encrypter {
 
 	/**
 	 * The encryption key.
@@ -20,21 +19,21 @@ class Encrypter implements EncrypterContract {
 	 *
 	 * @var string
 	 */
-	protected $cipher = MCRYPT_RIJNDAEL_128;
+	protected $cipher = 'rijndael-256';
 
 	/**
 	 * The mode used for encryption.
 	 *
 	 * @var string
 	 */
-	protected $mode = MCRYPT_MODE_CBC;
+	protected $mode = 'cbc';
 
 	/**
 	 * The block size of the cipher.
 	 *
 	 * @var int
 	 */
-	protected $block = 16;
+	protected $block = 32;
 
 	/**
 	 * Create a new encrypter instance.
@@ -44,7 +43,7 @@ class Encrypter implements EncrypterContract {
 	 */
 	public function __construct($key)
 	{
-		$this->key = (string) $key;
+		$this->key = $key;
 	}
 
 	/**
@@ -107,19 +106,10 @@ class Encrypter implements EncrypterContract {
 	 * @param  string  $value
 	 * @param  string  $iv
 	 * @return string
-	 *
-	 * @throws \Exception
 	 */
 	protected function mcryptDecrypt($value, $iv)
 	{
-		try
-		{
-			return mcrypt_decrypt($this->cipher, $this->key, $value, $this->mode, $iv);
-		}
-		catch (Exception $e)
-		{
-			throw new DecryptException($e->getMessage());
-		}
+		return mcrypt_decrypt($this->cipher, $this->key, $value, $this->mode, $iv);
 	}
 
 	/**
@@ -128,7 +118,7 @@ class Encrypter implements EncrypterContract {
 	 * @param  string  $payload
 	 * @return array
 	 *
-	 * @throws \Illuminate\Contracts\Encryption\DecryptException
+	 * @throws DecryptException
 	 */
 	protected function getJsonPayload($payload)
 	{
@@ -139,12 +129,12 @@ class Encrypter implements EncrypterContract {
 		// to decrypt the given value. We'll also check the MAC for this encryption.
 		if ( ! $payload || $this->invalidPayload($payload))
 		{
-			throw new DecryptException('Invalid data.');
+			throw new DecryptException("Invalid data.");
 		}
 
 		if ( ! $this->validMac($payload))
 		{
-			throw new DecryptException('MAC is invalid.');
+			throw new DecryptException("MAC is invalid.");
 		}
 
 		return $payload;
@@ -155,12 +145,10 @@ class Encrypter implements EncrypterContract {
 	 *
 	 * @param  array  $payload
 	 * @return bool
-	 *
-	 * @throws \RuntimeException
 	 */
 	protected function validMac(array $payload)
 	{
-		$bytes = (new SecureRandom)->nextBytes(16);
+		$bytes = with(new SecureRandom)->nextBytes(16);
 
 		$calcMac = hash_hmac('sha256', $this->hash($payload['iv'], $payload['value']), $bytes, true);
 
@@ -264,7 +252,7 @@ class Encrypter implements EncrypterContract {
 	 */
 	public function setKey($key)
 	{
-		$this->key = (string) $key;
+		$this->key = $key;
 	}
 
 	/**
@@ -276,8 +264,6 @@ class Encrypter implements EncrypterContract {
 	public function setCipher($cipher)
 	{
 		$this->cipher = $cipher;
-
-		$this->updateBlockSize();
 	}
 
 	/**
@@ -289,18 +275,6 @@ class Encrypter implements EncrypterContract {
 	public function setMode($mode)
 	{
 		$this->mode = $mode;
-
-		$this->updateBlockSize();
-	}
-
-	/**
-	 * Update the block size for the current cipher and mode.
-	 *
-	 * @return void
-	 */
-	protected function updateBlockSize()
-	{
-		$this->block = mcrypt_get_iv_size($this->cipher, $this->mode);
 	}
 
 }

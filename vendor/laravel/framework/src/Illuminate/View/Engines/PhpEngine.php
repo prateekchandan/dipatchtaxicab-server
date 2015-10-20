@@ -1,6 +1,6 @@
 <?php namespace Illuminate\View\Engines;
 
-use Exception;
+use Illuminate\View\Exception;
 
 class PhpEngine implements EngineInterface {
 
@@ -25,8 +25,6 @@ class PhpEngine implements EngineInterface {
 	 */
 	protected function evaluatePath($__path, $__data)
 	{
-		$obLevel = ob_get_level();
-
 		ob_start();
 
 		extract($__data);
@@ -38,9 +36,9 @@ class PhpEngine implements EngineInterface {
 		{
 			include $__path;
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
-			$this->handleViewException($e, $obLevel);
+			$this->handleViewException($e);
 		}
 
 		return ltrim(ob_get_clean());
@@ -50,19 +48,13 @@ class PhpEngine implements EngineInterface {
 	 * Handle a view exception.
 	 *
 	 * @param  \Exception  $e
-	 * @param  int  $obLevel
 	 * @return void
 	 *
 	 * @throws $e
 	 */
-	protected function handleViewException($e, $obLevel)
+	protected function handleViewException($e)
 	{
-		while (ob_get_level() > $obLevel)
-		{
-			ob_end_clean();
-		}
-
-		throw $e;
+		ob_get_clean(); throw $e;
 	}
 
 }

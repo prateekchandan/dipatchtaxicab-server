@@ -10,17 +10,17 @@ class SqlServerConnector extends Connector implements ConnectorInterface {
 	 * @var array
 	 */
 	protected $options = array(
-		PDO::ATTR_CASE => PDO::CASE_NATURAL,
-		PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-		PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
-		PDO::ATTR_STRINGIFY_FETCHES => false,
+			PDO::ATTR_CASE => PDO::CASE_NATURAL,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+			PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+			PDO::ATTR_STRINGIFY_FETCHES => false,
 	);
 
 	/**
 	 * Establish a database connection.
 	 *
 	 * @param  array  $config
-	 * @return \PDO
+	 * @return PDO
 	 */
 	public function connect(array $config)
 	{
@@ -37,45 +37,23 @@ class SqlServerConnector extends Connector implements ConnectorInterface {
 	 */
 	protected function getDsn(array $config)
 	{
+		extract($config);
+
 		// First we will create the basic DSN setup as well as the port if it is in
 		// in the configuration options. This will give us the basic DSN we will
 		// need to establish the PDO connections and return them back for use.
+		$port = isset($config['port']) ? ','.$port : '';
+
 		if (in_array('dblib', $this->getAvailableDrivers()))
 		{
-			return $this->getDblibDsn($config);
+			return "dblib:host={$host}{$port};dbname={$database}";
 		}
 		else
 		{
-			return $this->getSqlSrvDsn($config);
+			$dbName = $database != '' ? ";Database={$database}" : '';
+
+			return "sqlsrv:Server={$host}{$port}{$dbName}";
 		}
-	}
-
-	/**
-	 * Get the DSN string for a DbLib connection.
-	 *
-	 * @param  array  $config
-	 * @return string
-	 */
-	protected function getDblibDsn(array $config)
-	{
-		$port = isset($config['port']) ? ':'.$config['port'] : '';
-
-		return "dblib:host={$config['host']}{$port};dbname={$config['database']}";
-	}
-
-	/**
-	 * Get the DSN string for a SqlSrv connection.
-	 *
-	 * @param  array  $config
-	 * @return string
-	 */
-	protected function getSqlSrvDsn(array $config)
-	{
-		$port = isset($config['port']) ? ','.$config['port'] : '';
-
-		$dbName = $config['database'] != '' ? ";Database={$config['database']}" : '';
-
-		return "sqlsrv:Server={$config['host']}{$port}{$dbName}";
 	}
 
 	/**

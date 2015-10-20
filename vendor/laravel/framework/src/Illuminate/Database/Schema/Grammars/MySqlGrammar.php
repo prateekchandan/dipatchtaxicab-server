@@ -11,7 +11,7 @@ class MySqlGrammar extends Grammar {
 	 *
 	 * @var array
 	 */
-	protected $modifiers = array('Unsigned', 'Nullable', 'Default', 'Increment', 'Comment', 'After');
+	protected $modifiers = array('Unsigned', 'Nullable', 'Default', 'Increment', 'After');
 
 	/**
 	 * The possible column serials
@@ -33,6 +33,7 @@ class MySqlGrammar extends Grammar {
 	/**
 	 * Compile the query to determine the list of columns.
 	 *
+	 * @param  string  $table
 	 * @return string
 	 */
 	public function compileColumnExists()
@@ -90,7 +91,7 @@ class MySqlGrammar extends Grammar {
 	}
 
 	/**
-	 * Compile an add column command.
+	 * Compile a create table command.
 	 *
 	 * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
 	 * @param  \Illuminate\Support\Fluent  $command
@@ -386,7 +387,7 @@ class MySqlGrammar extends Grammar {
 	 */
 	protected function typeFloat(Fluent $column)
 	{
-		return $this->typeDouble($column);
+		return "float({$column->total}, {$column->places})";
 	}
 
 	/**
@@ -401,8 +402,10 @@ class MySqlGrammar extends Grammar {
 		{
 			return "double({$column->total}, {$column->places})";
 		}
-
-		return 'double';
+		else
+		{
+			return 'double';
+		}
 	}
 
 	/**
@@ -436,17 +439,6 @@ class MySqlGrammar extends Grammar {
 	protected function typeEnum(Fluent $column)
 	{
 		return "enum('".implode("', '", $column->allowed)."')";
-	}
-
-	/**
-	 * Create the column definition for a json type.
-	 *
-	 * @param  \Illuminate\Support\Fluent  $column
-	 * @return string
-	 */
-	protected function typeJson(Fluent $column)
-	{
-		return 'text';
 	}
 
 	/**
@@ -572,21 +564,6 @@ class MySqlGrammar extends Grammar {
 		if ( ! is_null($column->after))
 		{
 			return ' after '.$this->wrap($column->after);
-		}
-	}
-
-	/**
-	 * Get the SQL for an "comment" column modifier.
-	 *
-	 * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-	 * @param  \Illuminate\Support\Fluent  $column
-	 * @return string|null
-	 */
-	protected function modifyComment(Blueprint $blueprint, Fluent $column)
-	{
-		if ( ! is_null($column->comment))
-		{
-			return ' comment "'.$column->comment.'"';
 		}
 	}
 

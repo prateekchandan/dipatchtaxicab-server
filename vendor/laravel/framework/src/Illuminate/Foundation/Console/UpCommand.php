@@ -25,7 +25,7 @@ class UpCommand extends Command {
 	 */
 	public function fire()
 	{
-		@unlink($this->laravel->storagePath().'/framework/down');
+		@unlink($this->laravel['path.storage'].'/meta/down');
 
 		$this->info('Application is now live.');
 	}

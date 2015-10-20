@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien@symfony.com>
@@ -30,7 +30,6 @@ class BinaryFileResponse extends Response
     protected $file;
     protected $offset;
     protected $maxlen;
-    protected $deleteFileAfterSend = false;
 
     /**
      * Constructor.
@@ -63,7 +62,7 @@ class BinaryFileResponse extends Response
      * @param bool                $autoEtag           Whether the ETag header should be automatically set
      * @param bool                $autoLastModified   Whether the Last-Modified header should be automatically set
      *
-     * @return BinaryFileResponse The created response
+     * @return BinaryResponse The created response
      */
     public static function create($file = null, $status = 200, $headers = array(), $public = true, $contentDisposition = null, $autoEtag = false, $autoLastModified = true)
     {
@@ -73,7 +72,7 @@ class BinaryFileResponse extends Response
     /**
      * Sets the file to stream.
      *
-     * @param \SplFileInfo|string $file               The file to stream
+     * @param \SplFileInfo|string $file The file to stream
      * @param string              $contentDisposition
      * @param bool                $autoEtag
      * @param bool                $autoLastModified
@@ -170,11 +169,8 @@ class BinaryFileResponse extends Response
     public function prepare(Request $request)
     {
         $this->headers->set('Content-Length', $this->file->getSize());
-
-        if (!$this->headers->has('Accept-Ranges')) {
-            // Only accept ranges on safe HTTP methods
-            $this->headers->set('Accept-Ranges', $request->isMethodSafe() ? 'bytes' : 'none');
-        }
+        $this->headers->set('Accept-Ranges', 'bytes');
+        $this->headers->set('Content-Transfer-Encoding', 'binary');
 
         if (!$this->headers->has('Content-Type')) {
             $this->headers->set('Content-Type', $this->file->getMimeType() ?: 'application/octet-stream');
@@ -268,10 +264,6 @@ class BinaryFileResponse extends Response
 
         fclose($out);
         fclose($file);
-
-        if ($this->deleteFileAfterSend) {
-            unlink($this->file->getPathname());
-        }
     }
 
     /**
@@ -302,19 +294,5 @@ class BinaryFileResponse extends Response
     public static function trustXSendfileTypeHeader()
     {
         self::$trustXSendfileTypeHeader = true;
-    }
-
-    /**
-     * If this is set to true, the file will be unlinked after the request is send
-     * Note: If the X-Sendfile header is used, the deleteFileAfterSend setting will not be used.
-     * @param bool $shouldDelete
-     *
-     * @return BinaryFileResponse
-     */
-    public function deleteFileAfterSend($shouldDelete)
-    {
-        $this->deleteFileAfterSend = $shouldDelete;
-
-        return $this;
     }
 }

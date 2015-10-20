@@ -128,8 +128,6 @@ class Grammar extends BaseGrammar {
 	{
 		$sql = array();
 
-		$query->setBindings(array(), 'join');
-
 		foreach ($joins as $join)
 		{
 			$table = $this->wrapTable($join->table);
@@ -142,11 +140,6 @@ class Grammar extends BaseGrammar {
 			foreach ($join->clauses as $clause)
 			{
 				$clauses[] = $this->compileJoinConstraint($clause);
-			}
-
-			foreach ($join->bindings as $binding)
-			{
-				$query->addBinding($binding, 'join');
 			}
 
 			// Once we have constructed the clauses, we'll need to take the boolean connector
@@ -306,8 +299,6 @@ class Grammar extends BaseGrammar {
 	 */
 	protected function whereIn(Builder $query, $where)
 	{
-		if (empty($where['values'])) return '0 = 1';
-
 		$values = $this->parameterize($where['values']);
 
 		return $this->wrap($where['column']).' in ('.$values.')';
@@ -322,8 +313,6 @@ class Grammar extends BaseGrammar {
 	 */
 	protected function whereNotIn(Builder $query, $where)
 	{
-		if (empty($where['values'])) return '1 = 1';
-
 		$values = $this->parameterize($where['values']);
 
 		return $this->wrap($where['column']).' not in ('.$values.')';
@@ -379,18 +368,6 @@ class Grammar extends BaseGrammar {
 	protected function whereNotNull(Builder $query, $where)
 	{
 		return $this->wrap($where['column']).' is not null';
-	}
-
-	/**
-	 * Compile a "where date" clause.
-	 *
-	 * @param  \Illuminate\Database\Query\Builder  $query
-	 * @param  array  $where
-	 * @return string
-	 */
-	protected function whereDate(Builder $query, $where)
-	{
-		return $this->dateBasedWhere('date', $query, $where);
 	}
 
 	/**
@@ -479,7 +456,7 @@ class Grammar extends BaseGrammar {
 	{
 		$sql = implode(' ', array_map(array($this, 'compileHaving'), $havings));
 
-		return 'having '.preg_replace('/and |or /', '', $sql, 1);
+		return 'having '.preg_replace('/and /', '', $sql, 1);
 	}
 
 	/**
@@ -513,7 +490,7 @@ class Grammar extends BaseGrammar {
 
 		$parameter = $this->parameter($having['value']);
 
-		return $having['boolean'].' '.$column.' '.$having['operator'].' '.$parameter;
+		return 'and '.$column.' '.$having['operator'].' '.$parameter;
 	}
 
 	/**
@@ -525,11 +502,13 @@ class Grammar extends BaseGrammar {
 	 */
 	protected function compileOrders(Builder $query, $orders)
 	{
-		return 'order by '.implode(', ', array_map(function($order)
+		$me = $this;
+
+		return 'order by '.implode(', ', array_map(function($order) use ($me)
 		{
 			if (isset($order['sql'])) return $order['sql'];
 
-			return $this->wrap($order['column']).' '.$order['direction'];
+			return $me->wrap($order['column']).' '.$order['direction'];
 		}
 		, $orders));
 	}
@@ -571,21 +550,6 @@ class Grammar extends BaseGrammar {
 		foreach ($query->unions as $union)
 		{
 			$sql .= $this->compileUnion($union);
-		}
-
-		if (isset($query->unionOrders))
-		{
-			$sql .= ' '.$this->compileOrders($query, $query->unionOrders);
-		}
-
-		if (isset($query->unionLimit))
-		{
-			$sql .= ' '.$this->compileLimit($query, $query->unionLimit);
-		}
-
-		if (isset($query->unionOffset))
-		{
-			$sql .= ' '.$this->compileOffset($query, $query->unionOffset);
 		}
 
 		return ltrim($sql);
@@ -697,6 +661,7 @@ class Grammar extends BaseGrammar {
 	 * Compile a delete statement into SQL.
 	 *
 	 * @param  \Illuminate\Database\Query\Builder  $query
+	 * @param  array  $values
 	 * @return string
 	 */
 	public function compileDelete(Builder $query)

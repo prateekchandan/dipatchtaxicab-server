@@ -1,15 +1,11 @@
 <?php namespace Illuminate\Http;
 
-use BadMethodCallException;
 use Illuminate\Support\MessageBag;
-use Illuminate\Support\ViewErrorBag;
 use Symfony\Component\HttpFoundation\Cookie;
 use Illuminate\Session\Store as SessionStore;
-use Illuminate\Contracts\Support\MessageProvider;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\RedirectResponse as BaseRedirectResponse;
+use Illuminate\Support\Contracts\MessageProviderInterface;
 
-class RedirectResponse extends BaseRedirectResponse {
+class RedirectResponse extends \Symfony\Component\HttpFoundation\RedirectResponse {
 
 	/**
 	 * The request instance.
@@ -31,7 +27,7 @@ class RedirectResponse extends BaseRedirectResponse {
 	 * @param  string  $key
 	 * @param  string  $value
 	 * @param  bool  $replace
-	 * @return $this
+	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	public function header($key, $value, $replace = true)
 	{
@@ -49,11 +45,13 @@ class RedirectResponse extends BaseRedirectResponse {
 	 */
 	public function with($key, $value = null)
 	{
-		$key = is_array($key) ? $key : [$key => $value];
-
-		foreach ($key as $k => $v)
+		if (is_array($key))
 		{
-			$this->session->flash($k, $v);
+			foreach ($key as $k => $v) $this->with($k, $v);
+		}
+		else
+		{
+			$this->session->flash($key, $value);
 		}
 
 		return $this;
@@ -63,7 +61,7 @@ class RedirectResponse extends BaseRedirectResponse {
 	 * Add a cookie to the response.
 	 *
 	 * @param  \Symfony\Component\HttpFoundation\Cookie  $cookie
-	 * @return $this
+	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	public function withCookie(Cookie $cookie)
 	{
@@ -73,40 +71,16 @@ class RedirectResponse extends BaseRedirectResponse {
 	}
 
 	/**
-	 * Add multiple cookies to the response.
-	 *
-	 * @param  array  $cookies
-	 * @return $this
-	 */
-	public function withCookies(array $cookies)
-	{
-		foreach ($cookies as $cookie)
-		{
-			$this->headers->setCookie($cookie);
-		}
-
-		return $this;
-	}
-
-	/**
 	 * Flash an array of input to the session.
 	 *
 	 * @param  array  $input
-	 * @return $this
+	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	public function withInput(array $input = null)
 	{
 		$input = $input ?: $this->request->input();
 
-		$this->session->flashInput($data = array_filter($input, $callback = function (&$value) use (&$callback)
-		{
-			if (is_array($value))
-			{
-				$value = array_filter($value, $callback);
-			}
-
-			return ! $value instanceof UploadedFile;
-		}));
+		$this->session->flashInput($input);
 
 		return $this;
 	}
@@ -114,8 +88,8 @@ class RedirectResponse extends BaseRedirectResponse {
 	/**
 	 * Flash an array of input to the session.
 	 *
-	 * @param  mixed  string
-	 * @return $this
+	 * @param  dynamic  string
+	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	public function onlyInput()
 	{
@@ -125,7 +99,7 @@ class RedirectResponse extends BaseRedirectResponse {
 	/**
 	 * Flash an array of input to the session.
 	 *
-	 * @param  mixed  string
+	 * @param  dynamic  string
 	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	public function exceptInput()
@@ -136,41 +110,27 @@ class RedirectResponse extends BaseRedirectResponse {
 	/**
 	 * Flash a container of errors to the session.
 	 *
-	 * @param  \Illuminate\Contracts\Support\MessageProvider|array  $provider
-	 * @param  string  $key
-	 * @return $this
+	 * @param  \Illuminate\Support\Contracts\MessageProviderInterface|array  $provider
+	 * @return \Illuminate\Http\RedirectResponse
 	 */
-	public function withErrors($provider, $key = 'default')
+	public function withErrors($provider)
 	{
-		$value = $this->parseErrors($provider);
-
-		$this->session->flash(
-			'errors', $this->session->get('errors', new ViewErrorBag)->put($key, $value)
-		);
+		if ($provider instanceof MessageProviderInterface)
+		{
+			$this->with('errors', $provider->getMessageBag());
+		}
+		else
+		{
+			$this->with('errors', new MessageBag((array) $provider));
+		}
 
 		return $this;
 	}
 
 	/**
-	 * Parse the given errors into an appropriate value.
-	 *
-	 * @param  \Illuminate\Contracts\Support\MessageProvider|array  $provider
-	 * @return \Illuminate\Support\MessageBag
-	 */
-	protected function parseErrors($provider)
-	{
-		if ($provider instanceof MessageProvider)
-		{
-			return $provider->getMessageBag();
-		}
-
-		return new MessageBag((array) $provider);
-	}
-
-	/**
 	 * Get the request instance.
 	 *
-	 * @return \Illuminate\Http\Request
+	 * @return  \Illuminate\Http\Request
 	 */
 	public function getRequest()
 	{
@@ -201,7 +161,7 @@ class RedirectResponse extends BaseRedirectResponse {
 	/**
 	 * Set the session store implementation.
 	 *
-	 * @param  \Illuminate\Session\Store  $session
+	 * @param  \Illuminate\Session\Store  $store
 	 * @return void
 	 */
 	public function setSession(SessionStore $session)
@@ -225,7 +185,7 @@ class RedirectResponse extends BaseRedirectResponse {
 			return $this->with(snake_case(substr($method, 4)), $parameters[0]);
 		}
 
-		throw new BadMethodCallException("Method [$method] does not exist on Redirect.");
+		throw new \BadMethodCallException("Method [$method] does not exist on Redirect.");
 	}
 
 }

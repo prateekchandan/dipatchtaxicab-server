@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Esi implements SurrogateInterface
+class Esi
 {
     private $contentTypes;
 
@@ -34,22 +34,17 @@ class Esi implements SurrogateInterface
      * Constructor.
      *
      * @param array $contentTypes An array of content-type that should be parsed for ESI information.
-     *                            (default: text/html, text/xml, application/xhtml+xml, and application/xml)
+     *                           (default: text/html, text/xml, application/xhtml+xml, and application/xml)
      */
     public function __construct(array $contentTypes = array('text/html', 'text/xml', 'application/xhtml+xml', 'application/xml'))
     {
         $this->contentTypes = $contentTypes;
     }
 
-    public function getName()
-    {
-        return 'esi';
-    }
-
     /**
      * Returns a new cache strategy instance.
      *
-     * @return ResponseCacheStrategyInterface A ResponseCacheStrategyInterface instance
+     * @return EsiResponseCacheStrategyInterface A EsiResponseCacheStrategyInterface instance
      */
     public function createCacheStrategy()
     {
@@ -61,21 +56,7 @@ class Esi implements SurrogateInterface
      *
      * @param Request $request A Request instance
      *
-     * @return bool true if one surrogate has ESI/1.0 capability, false otherwise
-     */
-    public function hasSurrogateCapability(Request $request)
-    {
-        return $this->hasSurrogateEsiCapability($request);
-    }
-
-    /**
-     * Checks that at least one surrogate has ESI/1.0 capability.
-     *
-     * @param Request $request A Request instance
-     *
-     * @return bool true if one surrogate has ESI/1.0 capability, false otherwise
-     *
-     * @deprecated Deprecated since version 2.6, to be removed in 3.0. Use hasSurrogateCapability() instead
+     * @return bool    true if one surrogate has ESI/1.0 capability, false otherwise
      */
     public function hasSurrogateEsiCapability(Request $request)
     {
@@ -90,18 +71,6 @@ class Esi implements SurrogateInterface
      * Adds ESI/1.0 capability to the given Request.
      *
      * @param Request $request A Request instance
-     */
-    public function addSurrogateCapability(Request $request)
-    {
-        $this->addSurrogateEsiCapability($request);
-    }
-
-    /**
-     * Adds ESI/1.0 capability to the given Request.
-     *
-     * @param Request $request A Request instance
-     *
-     * @deprecated Deprecated since version 2.6, to be removed in 3.0. Use addSurrogateCapability() instead
      */
     public function addSurrogateEsiCapability(Request $request)
     {
@@ -130,21 +99,7 @@ class Esi implements SurrogateInterface
      *
      * @param Response $response A Response instance
      *
-     * @return bool true if the Response needs to be parsed, false otherwise
-     */
-    public function needsParsing(Response $response)
-    {
-        return $this->needsEsiParsing($response);
-    }
-
-    /**
-     * Checks that the Response needs to be parsed for ESI tags.
-     *
-     * @param Response $response A Response instance
-     *
-     * @return bool true if the Response needs to be parsed, false otherwise
-     *
-     * @deprecated Deprecated since version 2.6, to be removed in 3.0. Use needsParsing() instead
+     * @return bool    true if the Response needs to be parsed, false otherwise
      */
     public function needsEsiParsing(Response $response)
     {
@@ -158,10 +113,10 @@ class Esi implements SurrogateInterface
     /**
      * Renders an ESI tag.
      *
-     * @param string $uri          A URI
-     * @param string $alt          An alternate URI
-     * @param bool   $ignoreErrors Whether to ignore errors or not
-     * @param string $comment      A comment to add as an esi:include tag
+     * @param string  $uri          A URI
+     * @param string  $alt          An alternate URI
+     * @param bool    $ignoreErrors Whether to ignore errors or not
+     * @param string  $comment      A comment to add as an esi:include tag
      *
      * @return string
      */
@@ -281,7 +236,7 @@ class Esi implements SurrogateInterface
             throw new \RuntimeException('Unable to process an ESI tag without a "src" attribute.');
         }
 
-        return sprintf('<?php echo $this->surrogate->handle($this, %s, %s, %s) ?>'."\n",
+        return sprintf('<?php echo $this->esi->handle($this, %s, %s, %s) ?>'."\n",
             var_export($options['src'], true),
             var_export(isset($options['alt']) ? $options['alt'] : '', true),
             isset($options['onerror']) && 'continue' == $options['onerror'] ? 'true' : 'false'

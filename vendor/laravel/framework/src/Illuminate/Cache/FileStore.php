@@ -1,10 +1,8 @@
 <?php namespace Illuminate\Cache;
 
-use Exception;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Contracts\Cache\Store;
 
-class FileStore implements Store {
+class FileStore implements StoreInterface {
 
 	/**
 	 * The Illuminate Filesystem instance.
@@ -41,29 +39,23 @@ class FileStore implements Store {
 	 */
 	public function get($key)
 	{
-		return array_get($this->getPayload($key), 'data');
-	}
-
-	/**
-	 * Retrieve an item and expiry time from the cache by key.
-	 *
-	 * @param  string  $key
-	 * @return array
-	 */
-	protected function getPayload($key)
-	{
 		$path = $this->path($key);
 
 		// If the file doesn't exists, we obviously can't return the cache so we will
 		// just return null. Otherwise, we'll get the contents of the file and get
 		// the expiration UNIX timestamps from the start of the file's contents.
+		if ( ! $this->files->exists($path))
+		{
+			return null;
+		}
+
 		try
 		{
 			$expire = substr($contents = $this->files->get($path), 0, 10);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
-			return array('data' => null, 'time' => null);
+			return null;
 		}
 
 		// If the current time is greater than expiration timestamps we will delete
@@ -71,19 +63,10 @@ class FileStore implements Store {
 		// this directory much cleaner for us as old files aren't hanging out.
 		if (time() >= $expire)
 		{
-			$this->forget($key);
-
-			return array('data' => null, 'time' => null);
+			return $this->forget($key);
 		}
 
-		$data = unserialize(substr($contents, 10));
-
-		// Next, we'll extract the number of minutes that are remaining for a cache
-		// so that we can properly retain the time for things like the increment
-		// operation that may be performed on the cache. We'll round this out.
-		$time = ceil(($expire - time()) / 60);
-
-		return compact('data', 'time');
+		return unserialize(substr($contents, 10));
 	}
 
 	/**
@@ -115,7 +98,7 @@ class FileStore implements Store {
 		{
 			$this->files->makeDirectory(dirname($path), 0777, true, true);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			//
 		}
@@ -126,17 +109,13 @@ class FileStore implements Store {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return int
+	 * @return void
+	 *
+	 * @throws \LogicException
 	 */
 	public function increment($key, $value = 1)
 	{
-		$raw = $this->getPayload($key);
-
-		$int = ((int) $raw['data']) + $value;
-
-		$this->put($key, $int, (int) $raw['time']);
-
-		return $int;
+		throw new \LogicException("Increment operations not supported by this driver.");
 	}
 
 	/**
@@ -144,11 +123,13 @@ class FileStore implements Store {
 	 *
 	 * @param  string  $key
 	 * @param  mixed   $value
-	 * @return int
+	 * @return void
+	 *
+	 * @throws \LogicException
 	 */
 	public function decrement($key, $value = 1)
 	{
-		return $this->increment($key, $value * -1);
+		throw new \LogicException("Decrement operations not supported by this driver.");
 	}
 
 	/**
@@ -167,7 +148,7 @@ class FileStore implements Store {
 	 * Remove an item from the cache.
 	 *
 	 * @param  string  $key
-	 * @return bool
+	 * @return void
 	 */
 	public function forget($key)
 	{
@@ -175,10 +156,8 @@ class FileStore implements Store {
 
 		if ($this->files->exists($file))
 		{
-			return $this->files->delete($file);
+			$this->files->delete($file);
 		}
-
-		return false;
 	}
 
 	/**
@@ -188,12 +167,9 @@ class FileStore implements Store {
 	 */
 	public function flush()
 	{
-		if ($this->files->isDirectory($this->directory))
+		foreach ($this->files->directories($this->directory) as $directory)
 		{
-			foreach ($this->files->directories($this->directory) as $directory)
-			{
-				$this->files->deleteDirectory($directory);
-			}
+			$this->files->deleteDirectory($directory);
 		}
 	}
 
