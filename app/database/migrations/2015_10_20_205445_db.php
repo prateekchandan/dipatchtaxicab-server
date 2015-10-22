@@ -42,7 +42,7 @@ class Db extends Migration {
 			$table->string('home_address',2000)->nullable();
 			$table->string('credit_card',50)->nullable();
 			$table->string('cvv',5)->nullable();
-			$table->string('expiry_date',25-)->nullable();
+			$table->string('expiry_date',25)->nullable();
 			$table->timestamps();
 		});
 
@@ -58,7 +58,7 @@ class Db extends Migration {
 			$table->string('home_address',2000)->nullable();
 			$table->string('credit_card',50)->nullable();
 			$table->string('cvv',5)->nullable();
-			$table->string('expiry_date',25-)->nullable();
+			$table->string('expiry_date',25)->nullable();
 			$table->string('car_type',50)->nullable();
 			$table->string('cab_no',50)->nullable();
 			$table->double('flag')->default(0);
@@ -81,7 +81,7 @@ class Db extends Migration {
 			$table->string('home_address',2000)->nullable();
 			$table->string('credit_card',50)->nullable();
 			$table->string('cvv',5)->nullable();
-			$table->string('expiry_date',25-)->nullable();
+			$table->string('expiry_date',25)->nullable();
 			$table->string('type',150)->nullable();
 			$table->timestamps();
 		});

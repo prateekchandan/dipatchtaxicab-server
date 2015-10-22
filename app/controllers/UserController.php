@@ -44,7 +44,14 @@ class UserController extends BaseController {
 			$user->email = Input::get('email');
 			$user->password = Hash::make(Input::get('password'));
 			$user->save();
+			$user->activation_token = md5($user->email.$user->password.time());
 			Auth::login($user);
+
+			Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate/').$user->activation_token), function($message) use ($user)
+			{
+			    $message->to($user->email, 'User')->subject('Verify YOur Email! - Dispatch Taxi Cab');
+			});
+
 			return Error::success("Successful to Register",User::find(Auth::user()->id));
 		}else{
 			return Error::make('No email or password');
@@ -55,6 +62,14 @@ class UserController extends BaseController {
 	{
 		Auth::logout();
 		return Redirect::route('login');
+	}
+
+	public function activate($code)
+	{
+		User::where('activation_token','=','code')->update(array(
+			'activated'=>1
+			));
+		return Redirect::route('home');
 	}
 
 }
