@@ -50,7 +50,7 @@ class RemindersController extends Controller {
 	public function postReset()
 	{
 		$credentials = Input::only(
-			'email', 'password', 'password_confirmation', 'token'
+			'email', 'password', 'token'
 		);
 
 		$response = Password::reset($credentials, function($user, $password)
