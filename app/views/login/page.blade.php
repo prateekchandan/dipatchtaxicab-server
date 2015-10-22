@@ -74,7 +74,7 @@
 											
 											<!-- Inform Tip -->                                        
 											<div class="form-tip pt-20">
-												<a class="no-text-decoration size-13 margin-top-10 block" href="#">Forgot Password?</a>
+												<a class="no-text-decoration size-13 margin-top-10 block" href="{{ action('RemindersController@getRemind') }}">Forgot Password?</a>
 											</div>
 											
 										</div>

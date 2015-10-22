@@ -26,6 +26,8 @@ Route::group(array('before'=>'guest'),function(){
 	Route::post('register',array('as'=>'register','uses'=>'UserController@register'));
 });
 
+Route::controller('password', 'RemindersController');
+
 Route::get('activate/{id}',array('uses'=>'UserController@activate'));
 
 Route::get('test',function(){
