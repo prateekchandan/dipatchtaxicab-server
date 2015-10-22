@@ -103,4 +103,16 @@
 		$('#pass2').val($('#pass1').val());
 	});
 </script>
+
+<script type="text/javascript">
+	@if(Session::has('error'))
+	alert("{{Session::get('error')}}");
+	@endif
+
+	@if(Session::has('status'))
+	alert("{{Session::get('status')}}");
+	@endif
+
+</script>
+
 @endsection
