@@ -43,8 +43,8 @@ class UserController extends BaseController {
 			$user = new User();
 			$user->email = Input::get('email');
 			$user->password = Hash::make(Input::get('password'));
-			$user->save();
 			$user->activation_token = md5($user->email.$user->password.time());
+			$user->save();
 			Auth::login($user);
 
 			Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
