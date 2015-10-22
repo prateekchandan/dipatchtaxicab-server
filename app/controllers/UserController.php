@@ -47,7 +47,7 @@ class UserController extends BaseController {
 			$user->activation_token = md5($user->email.$user->password.time());
 			Auth::login($user);
 
-			Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate/').$user->activation_token), function($message) use ($user)
+			Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
 			{
 			    $message->to($user->email, 'User')->subject('Verify YOur Email! - Dispatch Taxi Cab');
 			});
@@ -66,7 +66,7 @@ class UserController extends BaseController {
 
 	public function activate($code)
 	{
-		User::where('activation_token','=','code')->update(array(
+		User::where('activation_token','=',$code)->update(array(
 			'activated'=>1
 			));
 		return Redirect::route('home');
