@@ -29,6 +29,7 @@ class HomeController extends BaseController {
 			case 'business':
 				View::share('data',Business::find($user->id));
 				break;
+			
 		}
 	}
 	public function home()
@@ -50,6 +51,7 @@ class HomeController extends BaseController {
 
 	public function edit_show()
 	{
+		$this->share_user_data();
 		return View::make('login.edit');
 	}
 

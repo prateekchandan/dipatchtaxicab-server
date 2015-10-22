@@ -45,9 +45,9 @@
 
 							<div class="toggle toggle-transparent toggle-accordion toggle-noicon">
 
-								<div class="toggle">
+								<div class="toggle {{$user->type=='customer'?'active':''}}">
 									<label class="size-20"><i class="glyphicon glyphicon-user"></i> &nbsp; I'm a customer</label>
-									<div class="toggle-content">
+									<div class="toggle-content ">
 
 
 										<form class="sky-form" method="post" action="" autocomplete="off">
@@ -58,7 +58,7 @@
 													<label>Phone Number</label>
 													<label class="input margin-bottom-10">
 														<i class="ico-append fa fa-phone"></i>
-														<input required="" type="phone" name="phone" class="phone-inp">
+														<input required="" type="phone" name="phone" class="phone-inp" value="{{$user->type=='customer'&&isset($data)?$data->phone:''}}">
 														<b class="tooltip tooltip-bottom-right">Enter Your Phone Number</b>
 													</label>
 												</div>
@@ -68,7 +68,7 @@
 														<div class="form-group">
 															<label>First Name</label>
 															<label class="input margin-bottom-10">
-																<input required="" type="text" name="first_name">
+																<input required="" type="text" name="first_name" value="{{$user->type=='customer'&&isset($data)?$data->first_name:''}}">
 															</label>
 														</div>
 													</div>
@@ -76,7 +76,7 @@
 														<div class="form-group">
 															<label>Last Name</label>
 															<label class="input margin-bottom-10">
-																<input required="" type="text" name="last_name">
+																<input required="" type="text" name="last_name" value="{{$user->type=='customer'&&isset($data)?$data->last_name:''}}">
 															</label>
 														</div>
 													</div>
@@ -85,7 +85,7 @@
 												<div class="form-group">
 													<label>Enter Your Home Address</label>
 													<label class="input margin-bottom-10">
-														<textarea name="address" required="" style="height:80px;"></textarea>
+														<textarea name="address" required="" style="height:80px;">{{$user->type=='customer'&&isset($data)?$data->home_address:''}}</textarea>
 													</label>
 												</div>
 
@@ -93,7 +93,7 @@
 													<label>Credit Card <small>(Optional)</small></label>
 													<label class="input margin-bottom-10">
 														<i class="ico-append fa fa-credit-card"></i>
-														<input type="text" name="credit_card" class="credit_card_inp" pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}">
+														<input type="text" name="credit_card" class="credit_card_inp" pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}" value="{{$user->type=='customer'&&isset($data)?$data->credit_card:''}}">
 														<b class="tooltip tooltip-bottom-right">Enter Your Credit Card Details</b>
 													</label>
 												</div>
@@ -104,7 +104,7 @@
 															<label>CVV/CVV2 <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
 																<i class="ico-append fa fa-credit-card"></i>
-																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}">
+																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='customer'&&isset($data)?$data->cvv:''}}">
 																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
 															</label>
 														</div>
@@ -113,7 +113,7 @@
 														<div class="form-group">
 															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" >
+																<input type="date" name="expiry_date" value="{{$user->type=='customer'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>
@@ -136,7 +136,7 @@
 									</div>
 								</div>
 
-								<div class="toggle">
+								<div class="toggle {{$user->type=='driver'?'active':''}}" >
 									<label class="size-20"><i class="fa fa-car"></i> &nbsp; I'm a Driver</label>
 									<div class="toggle-content">
 
@@ -148,7 +148,7 @@
 													<label>Phone Number</label>
 													<label class="input margin-bottom-10">
 														<i class="ico-append fa fa-phone"></i>
-														<input required="" type="phone" name="phone" class="phone-inp">
+														<input required="" type="phone" name="phone" class="phone-inp" value="{{$user->type=='driver'&&isset($data)?$data->phone:''}}">
 														<b class="tooltip tooltip-bottom-right">Enter Your Phone Number</b>
 													</label>
 												</div>
@@ -158,7 +158,7 @@
 														<div class="form-group">
 															<label>First Name</label>
 															<label class="input margin-bottom-10">
-																<input required="" type="text" name="first_name">
+																<input required="" type="text" name="first_name" value="{{$user->type=='driver'&&isset($data)?$data->first_name:''}}">
 															</label>
 														</div>
 													</div>
@@ -166,7 +166,7 @@
 														<div class="form-group">
 															<label>Last Name</label>
 															<label class="input margin-bottom-10">
-																<input required="" type="text" name="last_name">
+																<input required="" type="text" name="last_name" value="{{$user->type=='driver'&&isset($data)?$data->last_name:''}}">
 															</label>
 														</div>
 													</div>
@@ -175,7 +175,7 @@
 												<div class="form-group">
 													<label>Enter Your Home Address</label>
 													<label class="input margin-bottom-10">
-														<textarea name="address" required="" style="height:80px;"></textarea>
+														<textarea name="address" required="" style="height:80px;">{{$user->type=='driver'&&isset($data)?$data->home_address:''}}</textarea>
 													</label>
 												</div>
 
@@ -198,7 +198,7 @@
 														<div class="form-group">
 															<label>Cab Number</label>
 															<label class="input margin-bottom-10">
-																<input required="" type="text" name="cab_no">
+																<input required="" type="text" name="cab_no" value="{{$user->type=='driver'&&isset($data)?$data->cab_no:''}}">
 															</label>
 														</div>
 													</div>
@@ -208,7 +208,7 @@
 														<div class="form-group">
 															<label>Flag (in $)</label>
 															<label class="input margin-bottom-10">
-																<input required="" type="number" name="flag" step="0.01" min="0">
+																<input required="" type="number" name="flag" step="0.01" min="0" value="{{$user->type=='driver'&&isset($data)?$data->flag:''}}">
 															</label>
 														</div>
 													</div>
@@ -216,7 +216,7 @@
 														<div class="form-group">
 															<label>Rate (in $/mile)</label>
 															<label class="input margin-bottom-10">
-																<input required="" type="number" name="rate" step="0.01" min="0">
+																<input required="" type="number" name="rate" step="0.01" min="0" value="{{$user->type=='driver'&&isset($data)?$data->rate:''}}">
 															</label>
 														</div>
 													</div>
@@ -224,7 +224,7 @@
 														<div class="form-group">
 															<label>Hour (in $/hour)</label>
 															<label class="input margin-bottom-10">
-																<input required="" type="number" name="hour" step="0.01" min="0">
+																<input required="" type="number" name="hour" step="0.01" min="0" value="{{$user->type=='driver'&&isset($data)?$data->hour:''}}">
 															</label>
 														</div>
 													</div>
@@ -234,7 +234,7 @@
 													<label>Credit Card <small>(Optional)</small></label>
 													<label class="input margin-bottom-10">
 														<i class="ico-append fa fa-credit-card"></i>
-														<input type="text" name="credit_card" class="credit_card_inp" pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}">
+														<input type="text" name="credit_card" class="credit_card_inp" pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}" value="{{$user->type=='driver'&&isset($data)?$data->credit_card:''}}">
 														<b class="tooltip tooltip-bottom-right">Enter Your Credit Card Details</b>
 													</label>
 												</div>
@@ -245,7 +245,7 @@
 															<label>CVV/CVV2 <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
 																<i class="ico-append fa fa-credit-card"></i>
-																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}">
+																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='driver'&&isset($data)?$data->cvv:''}}">
 																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
 															</label>
 														</div>
@@ -254,7 +254,7 @@
 														<div class="form-group">
 															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" >
+																<input type="date" name="expiry_date" value="{{$user->type=='driver'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>
@@ -275,7 +275,7 @@
 									</div>
 								</div>
 
-								<div class="toggle">
+								<div class="toggle {{$user->type=='business'?'active':''}}">
 									<label class="size-20"><i class="fa fa-building"></i> &nbsp; I'm own a Business</label>
 									<div class="toggle-content">
 
@@ -287,7 +287,7 @@
 													<label>Phone Number</label>
 													<label class="input margin-bottom-10">
 														<i class="ico-append fa fa-phone"></i>
-														<input required="" type="phone" name="phone" class="phone-inp">
+														<input required="" type="phone" name="phone" class="phone-inp" value="{{$user->type=='business'&&isset($data)?$data->phone:''}}">
 														<b class="tooltip tooltip-bottom-right">Enter Your Phone Number</b>
 													</label>
 												</div>
@@ -295,7 +295,7 @@
 												<div class="form-group">
 													<label>Business Name</label>
 													<label class="input margin-bottom-10">
-														<input required="" type="text" name="business_name">
+														<input required="" type="text" name="business_name" value="{{$user->type=='business'&&isset($data)?$data->business_name:''}}">
 													</label>
 												</div>
 												
@@ -304,7 +304,7 @@
 												<div class="form-group">
 													<label>Enter Your Office Address</label>
 													<label class="input margin-bottom-10">
-														<textarea name="address" required="" style="height:80px;"></textarea>
+														<textarea name="address" required="" style="height:80px;">{{$user->type=='business'&&isset($data)?$data->home_address:''}}</textarea>
 													</label>
 												</div>
 
@@ -312,7 +312,7 @@
 													<label>Credit Card <small>(Optional)</small></label>
 													<label class="input margin-bottom-10">
 														<i class="ico-append fa fa-credit-card"></i>
-														<input type="text" name="credit_card" class="credit_card_inp" pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}">
+														<input type="text" name="credit_card" class="credit_card_inp" pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}" value="{{$user->type=='business'&&isset($data)?$data->credit_card:''}}">
 														<b class="tooltip tooltip-bottom-right">Enter Your Credit Card Details</b>
 													</label>
 												</div>
@@ -323,7 +323,7 @@
 															<label>CVV/CVV2 <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
 																<i class="ico-append fa fa-credit-card"></i>
-																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}">
+																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='business'&&isset($data)?$data->cvv:''}}">
 																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
 															</label>
 														</div>
@@ -332,7 +332,7 @@
 														<div class="form-group">
 															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" >
+																<input type="date" name="expiry_date" value="{{$user->type=='business'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>

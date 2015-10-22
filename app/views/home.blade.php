@@ -38,7 +38,7 @@
 			<div class="form-group row">
 				<label class="col-md-3"><strong>Credit Card</strong></label>
 				<label class="input col-md-9">
-					{{$data->credit_card}}
+					{{(strlen($data->credit_card)>4)?'**** **** **** '.substr($data->credit_card, -4):$data->credit_card}}
 				</label>
 			</div>
 		@if($user->type == "business")
