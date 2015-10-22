@@ -63,7 +63,8 @@
 										</div>
 
 										<div class="form-group">
-											<input type="password" name="passoword" class="form-control" placeholder="Password" required="">
+											<input type="password" name="passoword" class="form-control" placeholder="Password" required="" id="pass1">
+											<input type="hidden" name="passoword_confirmation" class="form-control" placeholder="Password" required="" id="pass2">
 										</div>
 										
 									
@@ -93,4 +94,13 @@
 			</section>
 			<!-- / -->
 
+@endsection
+
+
+@section('script')
+<script type="text/javascript">
+	$('#pass1').on('keyup',function(){
+		$('#pass2').val($('#pass1').val());
+	});
+</script>
 @endsection

@@ -50,7 +50,7 @@ class RemindersController extends Controller {
 	public function postReset()
 	{
 		$credentials = Input::only(
-			'email', 'password', 'token'
+			'email', 'password', 'password_confirmation', 'token'
 		);
 
 		$response = Password::reset($credentials, function($user, $password)
@@ -59,7 +59,7 @@ class RemindersController extends Controller {
 
 			$user->save();
 		});
-		return $response;
+
 		switch ($response)
 		{
 			case Password::INVALID_PASSWORD:
