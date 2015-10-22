@@ -55,14 +55,25 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'database',
-			'username'  => 'root',
-			'password'  => '',
+			'database'  => 'dispatch',
+			'username'  => 'dispatch',
+			'password'  => 'Passowrd123#',//
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
 		),
-
+		/*
+			'mysql' => array(
+			'driver'    => 'mysql',
+			'host'      => 'dispatch.db.2049269.hostedresource.com',
+			'database'  => 'dispatch',
+			'username'  => 'dispatch',
+			'password'  => 'Password@123',
+			'charset'   => 'utf8',
+			'collation' => 'utf8_unicode_ci',
+			'prefix'    => '',
+		),
+		*/
 		'pgsql' => array(
 			'driver'   => 'pgsql',
 			'host'     => 'localhost',
