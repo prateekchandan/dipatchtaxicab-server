@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'host' => 'mailstore1.secureserver.net',
+	'host' => 'smtpout.secureserver.net',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => null, 'name' => null),
+	'from' => array('address' => 'contact@dispatchtaxicab.com', 'name' => 'DISPATCH TAXI CAB'),
 
 	/*
 	|--------------------------------------------------------------------------

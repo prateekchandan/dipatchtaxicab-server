@@ -31,4 +31,7 @@ Route::get('test',function(){
 	{
 	    $message->to('prateekchandan5545@gmail.com', 'Prateek')->subject('Welcome!');
 	});
+
+
+echo 'sent';
 });
