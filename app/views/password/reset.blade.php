@@ -53,7 +53,7 @@
 									<h2 class="size-20">Reset Password</h2>
 								</div>
 
-								<form class="nomargin" method="post" action="{{ action('RemindersController@postRemind') }}" autocomplete="off">
+								<form class="nomargin" method="post" action="{{ action('RemindersController@postReset') }}" autocomplete="off">
 									<input type="hidden" name="token" value="{{ $token }}">
 									<div class="clearfix">
 										
