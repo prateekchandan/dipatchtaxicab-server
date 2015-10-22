@@ -64,7 +64,7 @@
 
 										<div class="form-group">
 											<input type="password" name="passoword" class="form-control" placeholder="Password" required="" id="pass1">
-											<input type="hidden" name="passoword_confirmation" class="form-control" placeholder="Password" required="" id="pass2">
+											<input type="hidden" name="password_confirmation" class="form-control" placeholder="Password" required="" id="pass2">
 										</div>
 										
 									
