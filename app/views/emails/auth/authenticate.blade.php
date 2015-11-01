@@ -7,7 +7,7 @@
 		<h2>Verify Your Email {{$email}}</h2>
 
 		<div>
-			To verify your email click on this link <a href="{{$url}}">{{$url}}</a>.
+			Please verify your email <a href="{{$url}}">CLICK HERE TO VALIDATE</a>.
 		</div>
 	</body>
 </html>

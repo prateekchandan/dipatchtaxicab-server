@@ -47,10 +47,17 @@ class UserController extends BaseController {
 			$user->save();
 			Auth::login($user);
 
-			Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
-			{
-			    $message->to($user->email, 'User')->subject('Verify YOur Email! - Dispatch Taxi Cab');
-			});
+			if(Request::server('SERVER_NAME')!='localhost'){
+				Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
+				{
+				    $message->to($user->email, 'User')->subject('Verify YOur Email! - Dispatch Taxi Cab');
+				});
+			}else{
+				Mail::pretend('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
+				{
+				    $message->to($user->email, 'User')->subject('Verify YOur Email! - Dispatch Taxi Cab');
+				});
+			}
 
 			return Error::success("Successful to Register",User::find(Auth::user()->id));
 		}else{

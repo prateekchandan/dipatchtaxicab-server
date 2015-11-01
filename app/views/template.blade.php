@@ -135,7 +135,7 @@
 			</div>
 
 			@if(Auth::check())
-				@if(Auth::user()->activated==0)
+				@if(Auth::user()->activated==0 && Auth::user()->type!="")
 					<section style="padding:0px">
 						<div class="alert alert-danger alert-dismissible" role="alert" style="margin:0px">
 						  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
