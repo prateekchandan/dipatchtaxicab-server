@@ -57,7 +57,7 @@ class RemindersController extends Controller {
 			'email', 'password', 'password_confirmation', 'token'
 		);
 
-		
+
 		Password::validator(function($credentials)
 		{
 		    return true;
@@ -78,7 +78,7 @@ class RemindersController extends Controller {
 				return Redirect::back()->with('error', Lang::get($response));
 
 			case Password::PASSWORD_RESET:
-				return Redirect::to('/')->with('error', Lang::get($response));
+				return Redirect::route('login')->with('error', Lang::get($response));
 		}
 	}
 
