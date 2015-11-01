@@ -118,7 +118,7 @@
 											<img class="img-responsive" id="cli-img" src="{{URL::asset('HTML/assets/images/tbg.png')}}" width="600" height="399" alt="">
 										</figure>
 										<div class="item-box-desc" style="padding-top: 29px;">
-											<h3>Cab License Image</h3>
+											<h3>TaxiCab License</h3>
 										</div>
 									</div>
 								</div>

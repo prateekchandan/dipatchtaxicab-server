@@ -78,19 +78,19 @@
 			<div class="form-group row">
 				<label class="col-md-3"><strong>Flag (in $)</strong></label>
 				<label class="input col-md-9">
-					{{$data->flag}}
+					{{number_format((float)$data->flag, 2, '.', '')}}
 				</label>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3"><strong>Rate (in $/mile)</strong></label>
 				<label class="input col-md-9">
-					{{$data->rate}}
+					{{number_format((float)$data->rate, 2, '.', '')}}
 				</label>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3"><strong>Hour (in $/hour)</strong></label>
 				<label class="input col-md-9">
-					{{$data->hour}}
+					{{number_format((float)$data->hour, 2, '.', '')}}
 				</label>
 			</div>
 
