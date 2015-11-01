@@ -1,6 +1,14 @@
 @extends('template')
 
 @section('content')
+<?php
+	$date = new DateTime();
+	$date = $date->format('Y-m-d');
+	if(!$date){
+		$date="2015-10-10";
+	}
+
+?>
 			<!-- 
 				PAGE HEADER 
 				
@@ -113,7 +121,7 @@
 														<div class="form-group">
 															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" value="{{$user->type=='customer'&&isset($data)?$data->expiry_date:''}}">
+																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='customer'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>
@@ -254,7 +262,7 @@
 														<div class="form-group">
 															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" value="{{$user->type=='driver'&&isset($data)?$data->expiry_date:''}}">
+																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='driver'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>
@@ -332,7 +340,7 @@
 														<div class="form-group">
 															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" value="{{$user->type=='business'&&isset($data)?$data->expiry_date:''}}">
+																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='business'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>
