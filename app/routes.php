@@ -26,6 +26,18 @@ Route::group(array('before'=>'guest'),function(){
 	Route::post('register',array('as'=>'register','uses'=>'UserController@register'));
 });
 
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is all the routes which will help the laravel application to run.
+|
+*/
+Route::group(array("prefix"=>"api"),function(){
+	Route::post('login',array('as'=>'login','uses'=>'UserController@login'));
+});
+
 Route::controller('password', 'RemindersController');
 
 Route::get('activate/{id}',array('uses'=>'UserController@activate'));
