@@ -228,7 +228,7 @@ class PasswordBroker {
 
 		if (isset($this->passwordValidator))
 		{
-			echo "boo";
+			echo $password." - ".$confirm." - ";
 			var_dump(call_user_func($this->passwordValidator, $credentials)). " " . var_dump($password == $confirm);
 			return call_user_func($this->passwordValidator, $credentials) && $password == $confirm;
 		}
