@@ -228,6 +228,7 @@ class PasswordBroker {
 
 		if (isset($this->passwordValidator))
 		{
+			echo "boo";
 			return call_user_func($this->passwordValidator, $credentials) && $password == $confirm;
 		}
 		else
@@ -244,6 +245,7 @@ class PasswordBroker {
 	 */
 	protected function validatePasswordWithDefaults(array $credentials)
 	{
+		echo "boo1";
 		$matches = $credentials['password'] == $credentials['password_confirmation'];
 
 		return $matches && $credentials['password'] && strlen($credentials['password']) >= 6;
