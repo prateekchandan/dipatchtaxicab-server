@@ -62,7 +62,7 @@ class RemindersController extends Controller {
 		    return true;
 		});
 
-		$response =Password::eset($credentials, function($user, $password)
+		$response =Password::reset($credentials, function($user, $password)
 		{
 			$user->password = Hash::make($password);
 
