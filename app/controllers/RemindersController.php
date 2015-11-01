@@ -57,12 +57,13 @@ class RemindersController extends Controller {
 			'email', 'password', 'password_confirmation', 'token'
 		);
 
-		Password::validator(function($credentials)
+		$passwordVal = new Password();
+		$passwordVal->validator(function($credentials)
 		{
 		    return true;
 		});
 
-		$response = Password::reset($credentials, function($user, $password)
+		$response =$passwordVal->reset($credentials, function($user, $password)
 		{
 			$user->password = Hash::make($password);
 
