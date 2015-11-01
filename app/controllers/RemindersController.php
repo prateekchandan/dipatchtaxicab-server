@@ -57,20 +57,20 @@ class RemindersController extends Controller {
 			'email', 'password', 'password_confirmation', 'token'
 		);
 
-		$passwordVal = new PasswordBroker();
-		$passwordVal->validator(function($credentials)
+		Password::validator(function($credentials)
 		{
 		    return true;
 		});
 
-		$response =$passwordVal->reset($credentials, function($user, $password)
+		$response =Password::eset($credentials, function($user, $password)
 		{
 			$user->password = Hash::make($password);
 
 			$user->save();
 		});
 
-		switch ($response)
+		echo $response;
+		/*switch ($response)
 		{
 			case Password::INVALID_PASSWORD:
 			case Password::INVALID_TOKEN:
@@ -79,7 +79,7 @@ class RemindersController extends Controller {
 
 			case Password::PASSWORD_RESET:
 				return Redirect::to('/');
-		}
+		}*/
 	}
 
 }
