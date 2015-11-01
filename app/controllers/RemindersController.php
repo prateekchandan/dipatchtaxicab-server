@@ -57,7 +57,7 @@ class RemindersController extends Controller {
 			'email', 'password', 'password_confirmation', 'token'
 		);
 
-		$passwordVal = new Password();
+		$passwordVal = new PasswordBroker();
 		$passwordVal->validator(function($credentials)
 		{
 		    return true;
