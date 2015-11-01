@@ -24,8 +24,8 @@ class UserController extends BaseController {
 		if(Input::has('email') && Input::has('password')){
 			if (Auth::attempt(array('email' => Input::get('email'), 'password' => Input::get('password'))))
 			{
-				return User::where('email','=',Input::get('email'))->first();
-			    return Error::success("Successful to Login",User::where('email','=',Input::get('email'))->first());
+				$user = User::where('email','=',Input::get('email'))->first();
+			    return Error::success("Successful to Login",$user);
 			}else{
 				return Error::make('Invalid email or password');
 			}
