@@ -51,12 +51,12 @@ class UserController extends BaseController {
 			if(Request::server('SERVER_NAME')!='localhost'){
 				Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
 				{
-				    $message->to($user->email, 'User')->subject('Verify YOur Email! - Dispatch Taxi Cab');
+				    $message->to($user->email, 'User')->subject('Please Validate your account - Dispatch Taxi Cab. ');
 				});
 			}else{
 				Mail::pretend('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
 				{
-				    $message->to($user->email, 'User')->subject('Verify YOur Email! - Dispatch Taxi Cab');
+				    $message->to($user->email, 'User')->subject('Please Validate your account - Dispatch Taxi Cab. ');
 				});
 			}
 
