@@ -109,19 +109,19 @@
 												<div class="row">
 													<div class="col-md-6">
 														<div class="form-group">
-															<label>CVV/CVV2 <small>(Optional)</small></label>
+															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<i class="ico-append fa fa-credit-card"></i>
-																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='customer'&&isset($data)?$data->cvv:''}}">
-																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
+																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='customer'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>
 													<div class="col-md-6">
 														<div class="form-group">
-															<label>Expiry Date <small>(Optional)</small></label>
+															<label>CVV/CVV2 <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='customer'&&isset($data)?$data->expiry_date:''}}">
+																<i class="ico-append fa fa-credit-card"></i>
+																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='customer'&&isset($data)?$data->cvv:''}}">
+																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
 															</label>
 														</div>
 													</div>
@@ -250,19 +250,19 @@
 												<div class="row">
 													<div class="col-md-6">
 														<div class="form-group">
-															<label>CVV/CVV2 <small>(Optional)</small></label>
+															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<i class="ico-append fa fa-credit-card"></i>
-																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='driver'&&isset($data)?$data->cvv:''}}">
-																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
+																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='driver'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>
 													<div class="col-md-6">
 														<div class="form-group">
-															<label>Expiry Date <small>(Optional)</small></label>
+															<label>CVV/CVV2 <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='driver'&&isset($data)?$data->expiry_date:''}}">
+																<i class="ico-append fa fa-credit-card"></i>
+																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='driver'&&isset($data)?$data->cvv:''}}">
+																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
 															</label>
 														</div>
 													</div>
@@ -328,19 +328,19 @@
 												<div class="row">
 													<div class="col-md-6">
 														<div class="form-group">
-															<label>CVV/CVV2 <small>(Optional)</small></label>
+															<label>Expiry Date <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<i class="ico-append fa fa-credit-card"></i>
-																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='business'&&isset($data)?$data->cvv:''}}">
-																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
+																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='business'&&isset($data)?$data->expiry_date:''}}">
 															</label>
 														</div>
 													</div>
 													<div class="col-md-6">
 														<div class="form-group">
-															<label>Expiry Date <small>(Optional)</small></label>
+															<label>CVV/CVV2 <small>(Optional)</small></label>
 															<label class="input margin-bottom-10">
-																<input type="date" name="expiry_date" min="{{$date}}" value="{{$user->type=='business'&&isset($data)?$data->expiry_date:''}}">
+																<i class="ico-append fa fa-credit-card"></i>
+																<input type="text" name="cvv" class="cvv_inp" pattern="[0-9]{3,4}" value="{{$user->type=='business'&&isset($data)?$data->cvv:''}}">
+																<b class="tooltip tooltip-bottom-right">3-4 Digit Number on Back of your Card</b>
 															</label>
 														</div>
 													</div>
