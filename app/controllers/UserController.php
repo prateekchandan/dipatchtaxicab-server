@@ -80,4 +80,13 @@ class UserController extends BaseController {
 		return Redirect::route('home');
 	}
 
+	public function send_activation_mail(){
+		$user = Auth::user();
+		if($user->activated==1){
+			return Error::make('User Already activated');
+		}else{
+			
+		}
+	}
+
 }

@@ -421,5 +421,7 @@
 		}
 		inp.val(val);
 	})
+
+	$('input[type=date]').datepicker();
 </script>
 @endsection
