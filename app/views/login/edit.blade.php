@@ -9,6 +9,13 @@
 	}
 
 ?>
+<style type="text/css">
+	select{
+		    appearance: normal;
+	    -moz-appearance: normal;
+	    -webkit-appearance: normal;
+	}
+</style>
 			<!-- 
 				PAGE HEADER 
 				
