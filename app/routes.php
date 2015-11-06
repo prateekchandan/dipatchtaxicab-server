@@ -15,6 +15,7 @@ Route::group(array('before'=>'user'),function(){
 	Route::post('edit',array('as'=>'edit','uses'=>'HomeController@edit'));
 	
 	Route::any('logout',array('as'=>'logout','uses'=>'UserController@logout'));
+	Route::any('resend',array('as'=>'resend','uses'=>'UserController@send_activation_mail'));
 	Route::any('activation',array('as'=>'activate_error','uses'=>'UserController@activate_error'));
 
 	Route::group(array('before'=>'activate'),function(){
@@ -47,12 +48,3 @@ Route::controller('password', 'RemindersController');
 
 Route::get('activate/{id}',array('uses'=>'UserController@activate'));
 
-Route::get('test',function(){
-	Mail::send('emails.auth.authenticate', array('key' => 'value'), function($message)
-	{
-	    $message->to('prateekchandan5545@gmail.com', 'Prateek')->subject('Welcome!');
-	});
-
-
-echo 'sent';
-});

@@ -34,6 +34,20 @@ class UserController extends BaseController {
 		}
 	}
 
+	private function send_email($user){
+		if(Request::server('SERVER_NAME')!='localhost'){
+			Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
+				{
+				    $message->to($user->email, 'User')->subject('Please Validate your account - Dispatch Taxi Cab. ');
+				});
+		}else{
+			Mail::pretend('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
+			{
+			    $message->to($user->email, 'User')->subject('Please Validate your account - Dispatch Taxi Cab. ');
+			});
+		}
+	}
+
 	public function register(){
 		if(Input::has('email') && Input::has('password')){
 			$user = User::where('email','=',Input::get('email'))->first();
@@ -48,18 +62,7 @@ class UserController extends BaseController {
 			$user->save();
 			Auth::login($user);
 
-			if(Request::server('SERVER_NAME')!='localhost'){
-				Mail::send('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
-				{
-				    $message->to($user->email, 'User')->subject('Please Validate your account - Dispatch Taxi Cab. ');
-				});
-			}else{
-				Mail::pretend('emails.auth.authenticate', array('email' => $user->email , 'url' => URL::to('activate').'/'.$user->activation_token), function($message) use ($user)
-				{
-				    $message->to($user->email, 'User')->subject('Please Validate your account - Dispatch Taxi Cab. ');
-				});
-			}
-
+			$this->send_email($user);
 			return Error::success("Successful to Register",User::find(Auth::user()->id));
 		}else{
 			return Error::make('No email or password');
@@ -85,7 +88,8 @@ class UserController extends BaseController {
 		if($user->activated==1){
 			return Error::make('User Already activated');
 		}else{
-
+			$this->send_email($user);
+			return Error::success('Mail Sent');
 		}
 	}
 
