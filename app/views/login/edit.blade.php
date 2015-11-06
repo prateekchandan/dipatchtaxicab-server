@@ -11,9 +11,9 @@
 ?>
 <style type="text/css">
 	select{
-		    appearance: normal;
-	    -moz-appearance: normal;
-	    -webkit-appearance: normal;
+		    appearance: normal !important;
+	    -moz-appearance: normal !important;
+	    -webkit-appearance: normal !important;
 	}
 </style>
 			<!-- 
