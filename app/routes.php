@@ -35,7 +35,7 @@ Route::group(array('before'=>'guest'),function(){
 |
 */
 Route::group(array("prefix"=>"api"),function(){
-	Route::post('login',array('as'=>'login','uses'=>'UserController@login'));
+	Route::post('login',array('uses'=>'UserController@login'));
 });
 
 Route::controller('password', 'RemindersController');
