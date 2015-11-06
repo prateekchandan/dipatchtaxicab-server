@@ -65,6 +65,15 @@ Route::filter('user', function()
 	if (!Auth::check()) return Redirect::to('login');
 });
 
+Route::filter('activate', function()
+{
+	if (!Auth::check()) return Redirect::to('login');
+
+	if(Auth::user()->activated == 0){
+		return Redirect::route('activate_error');
+	}
+});
+
 /*
 |--------------------------------------------------------------------------
 | CSRF Protection Filter

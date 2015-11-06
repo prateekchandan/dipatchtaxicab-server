@@ -85,7 +85,15 @@ class UserController extends BaseController {
 		if($user->activated==1){
 			return Error::make('User Already activated');
 		}else{
-			
+
+		}
+	}
+
+	public function activate_error(){
+		if(Auth::user()->activated==1){
+			return Redirect::route('home');
+		}else{
+			return View::make('login.activate');
 		}
 	}
 
