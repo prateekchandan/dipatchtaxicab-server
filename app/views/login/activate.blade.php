@@ -1,3 +1,4 @@
+@extends('template')
 @section('content')
 
 					<section style="padding:10px;margin-top:100px">
