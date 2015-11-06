@@ -9,5 +9,10 @@
 		<div>
 			Please verify your email <a href="{{$url}}">CLICK HERE TO VALIDATE</a>.
 		</div>
+		<br>
+		<div>
+			Alternatively , you can copy paste this link too on your browser address bar<br>
+			{{$url}}
+		</div>
 	</body>
 </html>
