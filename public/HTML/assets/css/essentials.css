@@ -12554,9 +12554,6 @@ div.autosuggest .tt-dataset {
     background: #fff;
     font: 15px/19px 'Open Sans', Helvetica, Arial, sans-serif;
     color: #404040;
-    appearance: normal;
-    -moz-appearance: none;
-    -webkit-appearance: none
 }
 .sky-form .col {
     float: left;
