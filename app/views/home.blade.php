@@ -133,6 +133,9 @@
 							<h3>Cab License Image</h3>
 						</div>
 					</div>
+					<div>
+						<strong>Cab License Expiry Date:</strong> <label>{{$data->cab_license_expiry_date}}</label>
+					</div>
 				</div>
 
 				<div class="col-md-3 col-sm-3 "><!-- item -->
@@ -144,6 +147,9 @@
 						<div class="item-box-desc" style="padding-top: 29px;">
 							<h3>Driving License Image</h3>
 						</div>
+					</div>
+					<div>
+						<strong>Driving License Expiry Date:</strong> <label>{{$data->driving_license_expiry_date}}</label>
 					</div>
 				</div>
 

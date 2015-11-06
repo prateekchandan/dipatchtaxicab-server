@@ -1,6 +1,14 @@
 @extends('template')
 
 @section('content')
+<?php
+	$date = new DateTime();
+	$date = $date->format('Y-m-d');
+	if(!$date){
+		$date="2015-10-10";
+	}
+
+?>
 			<!-- 
 				PAGE HEADER 
 				
@@ -121,6 +129,14 @@
 											<h3>TaxiCab License</h3>
 										</div>
 									</div>
+									<div class="col-md-12 sky-form">
+										<div class="form-group">
+											<label>Cab License Expiry date</label>
+											<label class="input margin-bottom-10">
+												<input type="date" name="cab_license_expiry_date" min="{{$date}}" value="{{$user->type=='customer'&&isset($data)?$data->expiry_date:''}}" required="">
+											</label>
+										</div>
+									</div>
 								</div>
 
 								<div class="col-md-3 col-sm-3 "><!-- item -->
@@ -144,9 +160,19 @@
 											<h3>Driving License Image</h3>
 										</div>
 									</div>
+									<div class="col-md-12 sky-form">
+										<div class="form-group">
+											<label>Driving License Expiry date</label>
+											<label class="input margin-bottom-10">
+												<input type="date" name="driving_license_expiry_date" min="{{$date}}" value="{{$user->type=='customer'&&isset($data)?$data->expiry_date:''}}" required="">
+											</label>
+										</div>
+									</div>
 								</div>
 
 							</div>
+
+
 						</form>
 					</div>
 					

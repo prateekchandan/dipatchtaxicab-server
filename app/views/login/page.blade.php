@@ -104,6 +104,7 @@
 
 @section('script')
 <script type="text/javascript">
+	var edit_url = "{{URL::Route('edit')}}";
 	function validate() {
 		var $email = $('#email'); //change form to id or containment selector
 		var $password = $('#password'); //change form to id or containment selector
@@ -166,7 +167,7 @@
 					$('#error_msg').html(data.message);
 					$('#error_msg').css("display","block");
 				}else{
-					location.reload();
+					window.location.href = edit_url;
 				}
 				jQuery("#preloader").css("display","none");
 			},

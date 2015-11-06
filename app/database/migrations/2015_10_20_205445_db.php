@@ -68,6 +68,9 @@ class Db extends Migration {
 			$table->string('cabpic',500)->nullable();
 			$table->string('cab_license',500)->nullable();
 			$table->string('driving_license',500)->nullable();
+			$table->string('cab_license_expiry_date',25)->nullable();
+			$table->string('driving_license_expiry_date',25)->nullable();
+			$table->string('cab_no_1',50)->nullable();
 			$table->timestamps();
 		});
 

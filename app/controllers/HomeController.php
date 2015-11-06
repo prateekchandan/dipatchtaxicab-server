@@ -147,7 +147,8 @@ class HomeController extends BaseController {
 			    $driver->$pic = '/HTML/assets/images/demo/'.$fileName;
 			}
 		}
-
+		$driver->cab_license_expiry_date = Input::get('cab_license_expiry_date');
+		$driver->driving_license_expiry_date = Input::get('driving_license_expiry_date');
 		$driver->save();
 		return Redirect::route('home');
 		
