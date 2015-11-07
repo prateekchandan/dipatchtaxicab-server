@@ -17,9 +17,9 @@ Route::group(array('before'=>'user'),function(){
 	Route::any('logout',array('as'=>'logout','uses'=>'UserController@logout'));
 	Route::any('resend',array('as'=>'resend','uses'=>'UserController@send_activation_mail'));
 	Route::any('activation',array('as'=>'activate_error','uses'=>'UserController@activate_error'));
+	Route::get('/',array('as'=>'home','uses'=>'HomeController@home'));
 
 	Route::group(array('before'=>'activate'),function(){
-		Route::get('/',array('as'=>'home','uses'=>'HomeController@home'));
 		Route::get('edit_pic',array('as'=>'edit_pic','uses'=>'HomeController@edit_pic_show'));
 		Route::post('edit_pic',array('as'=>'edit_pic','uses'=>'HomeController@edit_pic'));
 	});

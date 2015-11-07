@@ -38,6 +38,10 @@ class HomeController extends BaseController {
 		if($user->type=="")
 			return Redirect::route('edit');
 
+		if(Auth::user()->activated == 0){
+			return Redirect::route('activate_error');
+		}
+	
 		if($user->type=="driver")
 		{
 			$data = Driver::find($user->id);
