@@ -43,6 +43,9 @@ Route::group(array('before'=>'guest'),function(){
 Route::group(array("prefix"=>"api"),function(){
 	Route::post('login',array('uses'=>'UserController@login'));
 	Route::post('register',array('uses'=>'UserController@register'));
+	Route::get('customer/{id}',array('uses'=>'APIController@getCustomer'));
+	Route::get('driver/{id}',array('uses'=>'APIController@getDriver'));
+	Route::get('business/{id}',array('uses'=>'APIController@getBusiness'));
 
 	Route::any('{e1?}/{e2?}/{e3?}/{e4?}/{e5?}/{e6?}/{e7?}/{e8?}',function(){return Error::make("Invalid URL. Page don't exists");});
 });
