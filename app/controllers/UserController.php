@@ -25,7 +25,7 @@ class UserController extends BaseController {
 			if (Auth::attempt(array('email' => Input::get('email'), 'password' => Input::get('password'))))
 			{
 				$user = User::where('email','=',Input::get('email'))->first();
-			    return Error::success("Successful to Login",$user);
+			    return Error::success("Successful to Login",$user->toArray());
 			}else{
 				return Error::make('Invalid email or password');
 			}
@@ -63,7 +63,7 @@ class UserController extends BaseController {
 			Auth::login($user);
 
 			$this->send_email($user);
-			return Error::success("Successful to Register",User::find(Auth::user()->id));
+			return Error::success("Successful to Register",User::find(Auth::user()->id)->toArray());
 		}else{
 			return Error::make('No email or password');
 		}
