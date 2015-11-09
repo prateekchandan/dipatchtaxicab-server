@@ -160,13 +160,11 @@ class HomeController extends BaseController {
 		return View::make('login.edit_pic');
 	}
 
-	public function edit_pic()
-	{
-		if(Auth::user()->type != "driver")
-			return Redirect::to('home');
-
-		$user = Auth::user();
+	public function edit_pic_helper($user){
 		$driver = Driver::find($user->id);
+		// Extra safety
+		if(is_null($driver))
+			return;
 
 		$pics = array('pic'=>'','cabpic'=>'' ,'cab_license'=>'','driving_license'=>'');
 		$destinationPath = public_path().'/HTML/assets/images/demo';
@@ -181,8 +179,28 @@ class HomeController extends BaseController {
 		$driver->cab_license_expiry_date = Input::get('cab_license_expiry_date');
 		$driver->driving_license_expiry_date = Input::get('driving_license_expiry_date');
 		$driver->save();
+	}
+	public function edit_pic()
+	{
+		if(Auth::user()->type != "driver")
+			return Redirect::to('home');
+
+		$user = Auth::user();
+		$this->edit_pic_helper($user);
 		return Redirect::route('home');
-		
+	}
+	public function edit_pic_api($id)
+	{
+		$user = User::find($id);
+		if(is_null($user)){
+			return Error::make("Invalid User");
+		}
+		if($user->type != "driver")
+			return Error::make("User is not Driver");
+
+		$this->edit_pic_helper($user);
+		$data = Driver::find($id)->toArray();
+		return Error::success("User Data",$data);
 	}
 
 }
