@@ -30,4 +30,13 @@ class APIController extends BaseController {
 			return Error::success("Business found",$business->toArray());
 		}
 	}
+
+	public function getUser($id)
+	{
+		$user = User::find($id);
+		if(is_null($user)){
+			return Error::make("Invalid User");
+		}
+		return Error::success("User Details",$user->toArray());
+	}
 }

@@ -83,15 +83,27 @@ class UserController extends BaseController {
 		return Redirect::route('home');
 	}
 
-	public function send_activation_mail(){
-		$user = Auth::user();
+	public function send_activation_mail_helper($user){
 		if($user->activated==1){
-			return Error::make('User Already activated');
+			return Error::make('User Already activated please refresh');
 		}else{
 			$this->send_email($user);
 			return Error::success('Mail Sent');
 		}
 	}
+	public function send_activation_mail(){
+		$user = Auth::user();
+		return $this->send_activation_mail_helper($user);
+	}
+	public function send_activation_mail_api($id){
+		$user = User::find($id);
+		if(is_null($user)){
+			return Error::make("Invalid User");
+		}
+		return $this->send_activation_mail_helper($user);
+	}
+
+
 
 	public function activate_error(){
 		if(Auth::user()->activated==1){
