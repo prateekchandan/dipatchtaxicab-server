@@ -46,6 +46,7 @@ Route::group(array("prefix"=>"api"),function(){
 	Route::get('customer/{id}',array('uses'=>'APIController@getCustomer'));
 	Route::get('driver/{id}',array('uses'=>'APIController@getDriver'));
 	Route::get('business/{id}',array('uses'=>'APIController@getBusiness'));
+	Route::post('edit/{id}',array('uses'=>'HomeController@api_edit'));
 
 	Route::any('{e1?}/{e2?}/{e3?}/{e4?}/{e5?}/{e6?}/{e7?}/{e8?}',function(){return Error::make("Invalid URL. Page don't exists");});
 });

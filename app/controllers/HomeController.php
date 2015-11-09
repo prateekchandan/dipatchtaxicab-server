@@ -59,8 +59,8 @@ class HomeController extends BaseController {
 		return View::make('login.edit');
 	}
 
-	public function edit(){
-		$user  = Auth::user();
+	public function edit_help($user)
+	{
 		switch ($user->type) {
 			case 'customer':
 				Customer::where('id','=',$user->id)->delete();
@@ -121,7 +121,34 @@ class HomeController extends BaseController {
 				$business->save();
 				break;
 		}
+	}
+	public function edit(){
+		$user  = Auth::user();
+		$this->edit_help($user);
 		return Redirect::route('home');
+	}
+
+	public function api_edit($id){
+		$user = User::find($id);
+		if(is_null($user)){
+			return Error::make("Invalid User");
+		}
+
+		$this->edit_help($user);
+		$data = array();
+
+		switch (Input::get('type')) {
+			case 'driver':
+				$data = Driver::find($id)->toArray();
+				break;
+			case 'customer':
+				$data = Customer::find($id)->toArray();
+				break;
+			case 'business':
+				$data = Business::find($id)->toArray();
+				break;
+			}
+		return Error::success("User Data",$data);
 	}
 
 	public function edit_pic_show()
