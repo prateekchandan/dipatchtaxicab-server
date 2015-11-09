@@ -200,7 +200,7 @@ class HomeController extends BaseController {
 
 		$this->edit_pic_helper($user);
 		$data = Driver::find($id)->toArray();
-		return Error::success("User Data",$data);
+		return Error::success("Successfully Uploaded pictures",$data);
 	}
 
 }
