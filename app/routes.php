@@ -42,6 +42,7 @@ Route::group(array('before'=>'guest'),function(){
 */
 Route::group(array("prefix"=>"api"),function(){
 	Route::post('login',array('uses'=>'UserController@login'));
+	Route::post('register',array('uses'=>'UserController@register'));
 	Route::get('user/{id}',array('uses'=>'APIController@getUser'));
 	Route::get('customer/{id}',array('uses'=>'APIController@getCustomer'));
 	Route::get('driver/{id}',array('uses'=>'APIController@getDriver'));
