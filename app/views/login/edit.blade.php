@@ -237,7 +237,7 @@
 													</div>
 													<div class="col-md-4">
 														<div class="form-group">
-															<label>Hour (in $/hour)</label>
+															<label>Rate (in $/hour)</label>
 															<label class="input margin-bottom-10">
 																<input required="" type="number" name="hour" step="0.01" min="0" value="{{$user->type=='driver'&&isset($data)?$data->hour:''}}">
 															</label>
