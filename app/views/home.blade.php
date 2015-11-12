@@ -88,7 +88,7 @@
 				</label>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3"><strong>Hour (in $/hour)</strong></label>
+				<label class="col-md-3"><strong>Rate (in $/hour)</strong></label>
 				<label class="input col-md-9">
 					{{number_format((float)$data->hour, 2, '.', '')}}
 				</label>
