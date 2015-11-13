@@ -110,6 +110,7 @@
 									@if(Auth::check())
 									<?php
 										$data=array("first_name"=>"User");
+										$id = Auth::user()->id;
 										switch (Input::get('type')) {
 											case 'driver':
 												$data = Driver::find($id)->toArray();
@@ -130,7 +131,7 @@
 									</li>
 									<li class="dropdown">
 										<a class="dropdown-toggle" href="#">
-											Hi {{$data["first_name"]}}
+											Hi! {{$data["first_name"]}}
 										</a>
 										<ul class="dropdown-menu">
 											<li><a href="{{URL::Route('logout')}}">Logout</a></li>
