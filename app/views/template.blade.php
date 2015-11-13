@@ -108,17 +108,33 @@
 										
 									</li>
 									@if(Auth::check())
+									<?php
+										$data=array("first_name"=>"User");
+										switch (Input::get('type')) {
+											case 'driver':
+												$data = Driver::find($id)->toArray();
+												break;
+											case 'customer':
+												$data = Customer::find($id)->toArray();
+												break;
+											case 'business':
+												$data = Business::find($id)->toArray();
+												break;
+											}
+									?>
 									<li><!-- HOME -->
 										<a  href="{{URL::Route('edit')}}">
 											Edit
 										</a>
 										
 									</li>
-									<li><!-- HOME -->
-										<a  href="{{URL::Route('logout')}}">
-											Logout
+									<li class="dropdown">
+										<a class="dropdown-toggle" href="#">
+											Hi {{$data["first_name"]}}
 										</a>
-										
+										<ul class="dropdown-menu">
+											<li><a href="{{URL::Route('logout')}}">Logout</a></li>
+										</ul>
 									</li>
 									@endif
 								</ul>
