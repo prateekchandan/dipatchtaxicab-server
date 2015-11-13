@@ -111,7 +111,7 @@
 									<?php
 										$data=array("first_name"=>"User");
 										$id = Auth::user()->id;
-										switch (Input::get('type')) {
+										switch (Auth::user()->type) {
 											case 'driver':
 												$data = Driver::find($id)->toArray();
 												break;
